@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
 * Студент: [Роман Сорокин](https://up.htmlacademy.ru/ecmascript/14/user/1421741).
-* Наставник: `Неизвестно`.
+* Наставник: [Виктор Кан](https://htmlacademy.ru/profile/viktorkan).
 
 ---
 
