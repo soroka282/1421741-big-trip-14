@@ -14,7 +14,7 @@ const tripEvents = document.querySelector('.trip-events');
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
-}
+};
 
 render(tripControlsNavigation, createMenuTemplate(), 'beforeend');
 render(tripInfo, createWayTemplate(), 'beforeend');
@@ -23,7 +23,7 @@ render(tripControlsFilters, createFiltersTemplate(), 'beforeend');
 render(tripEvents, createSortTemplate(), 'beforeend');
 for (let i = 0; i < 3; i++) {
   render(tripEvents, createEventsTemplate(), 'beforeend');
-};
+}
 
 const tripEventsItem = document.querySelector('.trip-events__item');
 
