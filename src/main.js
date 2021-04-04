@@ -11,6 +11,7 @@ const tripControlsNavigation = document.querySelector('.trip-controls__navigatio
 const tripInfo = document.querySelector('.trip-info');
 const tripControlsFilters = document.querySelector('.trip-controls__filters');
 const tripEvents = document.querySelector('.trip-events');
+const tripEventsList = document.querySelector('.trip-events__list');
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -20,12 +21,12 @@ render(tripControlsNavigation, createMenuTemplate(), 'beforeend');
 render(tripInfo, createWayTemplate(), 'beforeend');
 render(tripInfo, createCostTemplate(), 'beforeend');
 render(tripControlsFilters, createFiltersTemplate(), 'beforeend');
-render(tripEvents, createSortTemplate(), 'beforeend');
-for (let i = 0; i < 3; i++) {
-  render(tripEvents, createEventsTemplate(), 'beforeend');
-}
+render(tripEvents, createSortTemplate(), 'afterbegin');
 
 const tripEventsItem = document.querySelector('.trip-events__item');
+for (let i = 0; i < 3; i++) {
+  render(tripEventsList, createEventsTemplate(), 'beforeend');
+}
 
-render(tripEventsItem, createFormTemplate(), 'afterbegin');
-render(tripEventsItem, createFormEditTemplate(), 'beforeend');
+render(tripEventsList, createFormTemplate(), 'beforeend');
+render(tripEventsList, createFormEditTemplate(), 'beforeend');
