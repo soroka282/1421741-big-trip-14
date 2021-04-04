@@ -4,8 +4,8 @@ import {createCostTemplate} from './view/cost.js';
 import {createFiltersTemplate} from './view/filter.js';
 import {createSortTemplate} from './view/sort.js';
 import {createEventsTemplate} from './view/events.js';
-import {createFormTemplate} from './view/form-create.js';
-import {createFormEditTemplate} from './view/form-edit.js';
+import {createPointTemplate} from './view/point-create.js';
+import {editPointTemplate} from './view/point-edit.js';
 
 const tripControlsNavigation = document.querySelector('.trip-controls__navigation');
 const tripInfo = document.querySelector('.trip-info');
@@ -28,5 +28,5 @@ for (let i = 0; i < 3; i++) {
   render(tripEventsList, createEventsTemplate(), 'beforeend');
 }
 
-render(tripEventsList, createFormTemplate(), 'beforeend');
-render(tripEventsList, createFormEditTemplate(), 'beforeend');
+render(tripEventsList, createPointTemplate(), 'afterbegin');
+render(tripEventsList, editPointTemplate(), 'beforeend');
