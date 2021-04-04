@@ -23,7 +23,7 @@ render(tripInfo, createCostTemplate(), 'beforeend');
 render(tripControlsFilters, createFiltersTemplate(), 'beforeend');
 render(tripEvents, createSortTemplate(), 'afterbegin');
 
-const tripEventsItem = document.querySelector('.trip-events__item');
+
 for (let i = 0; i < 3; i++) {
   render(tripEventsList, createEventsTemplate(), 'beforeend');
 }
