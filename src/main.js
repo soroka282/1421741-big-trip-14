@@ -4,8 +4,9 @@ import {createCostTemplate} from './view/cost.js';
 import {createFiltersTemplate} from './view/filter.js';
 import {createSortTemplate} from './view/sort.js';
 import {createEventsTemplate} from './view/events.js';
-import {createFormTemplate} from './view/form-create.js';
-import {createFormEditTemplate} from './view/form-edit.js';
+import {createPointTemplate} from './view/point-create.js';
+import {editPointTemplate} from './view/point-edit.js';
+import {createEventsList} from './view/events-list.js';
 
 const tripControlsNavigation = document.querySelector('.trip-controls__navigation');
 const tripInfo = document.querySelector('.trip-info');
@@ -14,18 +15,34 @@ const tripEvents = document.querySelector('.trip-events');
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
-}
-
-render(tripControlsNavigation, createMenuTemplate(), 'beforeend');
-render(tripInfo, createWayTemplate(), 'beforeend');
-render(tripInfo, createCostTemplate(), 'beforeend');
-render(tripControlsFilters, createFiltersTemplate(), 'beforeend');
-render(tripEvents, createSortTemplate(), 'beforeend');
-for (let i = 0; i < 3; i++) {
-  render(tripEvents, createEventsTemplate(), 'beforeend');
 };
 
-const tripEventsItem = document.querySelector('.trip-events__item');
+//Отрисовка меню
+render(tripControlsNavigation, createMenuTemplate(), 'beforeend');
 
-render(tripEventsItem, createFormTemplate(), 'afterbegin');
-render(tripEventsItem, createFormEditTemplate(), 'beforeend');
+//Отрисовка марштрута
+render(tripInfo, createWayTemplate(), 'beforeend');
+
+//Отрисовка стоимости
+render(tripInfo, createCostTemplate(), 'beforeend');
+
+//Отрисовка фильтра
+render(tripControlsFilters, createFiltersTemplate(), 'beforeend');
+
+//Отрисовка сортировка
+render(tripEvents, createSortTemplate(), 'afterbegin');
+
+//Отрисовка списока точек
+render(tripEvents, createEventsList(), 'beforeend');
+const tripEventsList = document.querySelector('.trip-events__list');
+
+//Отрисовка посещаемых точек
+for (let i = 0; i < 3; i++) {
+  render(tripEventsList, createEventsTemplate(), 'beforeend');
+}
+
+//Отрисовка формы создания точки
+render(tripEventsList, createPointTemplate(), 'afterbegin');
+
+//Отрисовка формы редактирование точки
+render(tripEventsList, editPointTemplate(), 'beforeend');
