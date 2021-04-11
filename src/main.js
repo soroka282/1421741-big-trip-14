@@ -47,3 +47,4 @@ render(tripEventsList, createPointTemplate(data[0]), 'afterbegin');
 
 //Отрисовка формы редактирование точки
 render(tripEventsList, editPointTemplate(data[0]), 'beforeend');
+

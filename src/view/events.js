@@ -1,34 +1,20 @@
-import dayjs from 'dayjs';
 import {getDateISO} from '../util.js';
 import {getDateMonthDay} from '../util.js';
 import {getDateHoursMinutes} from '../util.js';
+import {getDiffDate} from '../util.js';
 
-const MILLISECONDS_IN_DAY = 86400000;
-const MILLISECONDS_IN_HOURS = 3600000;
+const createOfferMarkup = (offer) => {
+  return `
+  <li class="event__offer">
+    <span class="event__offer-title">${offer.title}</span>
+    &plus;&euro;&nbsp;
+    <span class="event__offer-price">${offer.price}</span>
+  </li>
+  `;
+};
+
 const createEventsTemplate = (data) => {
   const {type, name, price, dateFrom, dateTo, offer, favorite} = data;
-
-  const getDiffDate = () => {
-
-    const diff = dateTo - dateFrom;
-    if (diff <= MILLISECONDS_IN_DAY) {
-      return dayjs(diff).format('hh') + 'H ' + dayjs(diff).format('mm') + 'M';
-    } if (diff > MILLISECONDS_IN_DAY) {
-      return dayjs(diff).format('DD') + 'D ' + dayjs(diff).format('DD') + 'H ' + dayjs(diff).format('mm') + 'M';
-    } if (diff <= MILLISECONDS_IN_HOURS) {
-      return dayjs(diff).format('mm') + 'M';
-    }
-  };
-
-  const createOfferMarkup = (offer) => {
-    return `
-    <li class="event__offer">
-      <span class="event__offer-title">${offer.title}</span>
-      &plus;&euro;&nbsp;
-      <span class="event__offer-price">${offer.price}</span>
-    </li>
-    `;
-  };
 
   const offersMarkup = offer.map((item) => createOfferMarkup(item)).join(' ');
 
@@ -36,7 +22,7 @@ const createEventsTemplate = (data) => {
     <div class="event">
       <time class="event__date" datetime=${getDateISO(dateFrom)}>${getDateMonthDay(dateFrom)}</time>
       <div class="event__type">
-        <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
+        <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
       </div>
       <h3 class="event__title">${type} ${name}</h3>
       <div class="event__schedule">
@@ -45,7 +31,7 @@ const createEventsTemplate = (data) => {
           &mdash;
           <time class="event__end-time" datetime=${getDateISO(dateTo)}>${getDateHoursMinutes(dateTo)}</time>
         </p>
-        <p class="event__duration">${getDiffDate()}</p>
+        <p class="event__duration">${getDiffDate(dateTo, dateFrom)}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${price}</span>

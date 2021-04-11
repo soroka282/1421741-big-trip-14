@@ -1,28 +1,11 @@
 import {getDateFormat} from '../util.js';
+import {getMarkupIsElemHave} from '../util.js';
+import {createPictureMarkup} from './point-edit';
+import {createOfferMarkup} from './point-edit';
 
 export const createPointTemplate = (data) => {
 
   const {type, name, price, dateFrom, dateTo, offer, destination} = data;
-
-  const createPictureMarkup = () => {
-    return destination.photo
-      .map((item) => {
-        return `<img class="event__photo" src="${item.src}" alt="${item.description}">`;
-      })
-      .join(' ');
-  };
-
-  const createOfferMarkup = (offer) => {
-    return `
-    <div class="event__offer-selector">
-                        <input class="event__offer-checkbox  visually-hidden" id="${offer.title}" type="checkbox" name="event-offer-${offer.title}"}>
-                        <label class="event__offer-label" for="${offer.title}">
-                          <span class="event__offer-title">${offer.title}</span>
-                          &plus;&euro;&nbsp;
-                          <span class="even__offer-price">${offer.price}</span>
-                        </label>
-                      </div>`;
-  };
 
   const offersMarkup = offer.map((item) => createOfferMarkup(item)).join(' ');
 
@@ -126,8 +109,7 @@ export const createPointTemplate = (data) => {
                 </header>
                 <section class="event__details">
                   <section class="event__section  event__section--offers">
-                    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
+                  ${getMarkupIsElemHave(offer, '<h3 class="event__section-title  event__section-title--offers">Offers</h3>')}
                     <div class="event__available-offers">
                       <div class="event__offer-selector">
                       ${offersMarkup}
@@ -135,12 +117,12 @@ export const createPointTemplate = (data) => {
                   </section>
 
                   <section class="event__section  event__section--destination">
-                    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+                    ${getMarkupIsElemHave(destination.description, '<h3 class="event__section-title  event__section-title--destination">Destination</h3>')}
                     <p class="event__destination-description">${destination.description}</p>
 
                     <div class="event__photos-container">
                       <div class="event__photos-tape">
-                      ${createPictureMarkup()}
+                      ${createPictureMarkup(destination)}
                       </div>
                     </div>
                   </section>
