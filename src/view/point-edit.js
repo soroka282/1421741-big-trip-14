@@ -1,5 +1,8 @@
-import {getDateFormat} from '../util.js';
-import {getMarkupIsElemHave} from '../util.js';
+import {
+  getDateFormat,
+  getMarkupIsElemHave,
+  createElement
+} from '../util.js';
 
 const createOfferMarkup = (offer) => {
   return `
@@ -148,6 +151,30 @@ const editPointTemplate = (data) => {
                 </section>
               </form></li>`;
 };
+
+export default class PointEdit {
+  constructor(data) {
+    this._element = null;
+    this._data = data;
+  }
+
+  getTemplate() {
+    return editPointTemplate(this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
 
 export {
   editPointTemplate,

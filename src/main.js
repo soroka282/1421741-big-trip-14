@@ -1,50 +1,77 @@
-import {createMenuTemplate} from './view/menu.js';
-import {createWayTemplate} from './view/way.js';
-import {createCostTemplate} from './view/cost.js';
-import {createFiltersTemplate} from './view/filter.js';
-import {createSortTemplate} from './view/sort.js';
-import {createEventsTemplate} from './view/events.js';
-import {createPointTemplate} from './view/point-create.js';
-import {editPointTemplate} from './view/point-edit.js';
-import {createEventsList} from './view/events-list.js';
+import SiteMenuView from './view/menu.js';
+import WayPointView from './view/way.js';
+import CostElementView from './view/cost.js';
+import FilterPointView from './view/filter.js';
+import SortView from './view/sort.js';
+import PointView from './view/events.js';
+import CreatePointView from './view/point-create.js';
+import PointEditView from './view/point-edit.js';
+import ListView from './view/events-list.js';
 import {data} from './mock/data.js';
+import {renderElement, RenderPosition} from './util.js';
 
 const tripControlsNavigation = document.querySelector('.trip-controls__navigation');
 const tripInfo = document.querySelector('.trip-info');
 const tripControlsFilters = document.querySelector('.trip-controls__filters');
 const tripEvents = document.querySelector('.trip-events');
 
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
-
 //Отрисовка меню
-render(tripControlsNavigation, createMenuTemplate(), 'beforeend');
+renderElement(tripControlsNavigation, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
 
 //Отрисовка марштрута
-render(tripInfo, createWayTemplate(data[0]), 'beforeend');
+renderElement(tripInfo, new WayPointView(data[0]).getElement(), RenderPosition.BEFOREEND);
 
 //Отрисовка стоимости
-render(tripInfo, createCostTemplate(data[0]), 'beforeend');
+renderElement(tripInfo, new CostElementView(data[0]).getElement(), RenderPosition.BEFOREEND);
 
 //Отрисовка фильтра
-render(tripControlsFilters, createFiltersTemplate(), 'beforeend');
+renderElement(tripControlsFilters, new FilterPointView().getElement(), RenderPosition.BEFOREEND);
 
 //Отрисовка сортировки
-render(tripEvents, createSortTemplate(), 'afterbegin');
+renderElement(tripEvents, new SortView().getElement(), RenderPosition.AFTERBEGIN);
 
 //Отрисовка списка точек
-render(tripEvents, createEventsList(), 'beforeend');
-const tripEventsList = document.querySelector('.trip-events__list');
+const PointListComponent = new ListView();
 
-//Отрисовка посещаемых точек
-for (let i = 0; i < 5; i++) {
-  render(tripEventsList, createEventsTemplate(data[i]), 'beforeend');
-}
-
-//Отрисовка формы создания точки
-render(tripEventsList, createPointTemplate(data[0]), 'afterbegin');
+renderElement(tripEvents, PointListComponent.getElement(), RenderPosition.BEFOREEND);
 
 //Отрисовка формы редактирование точки
-render(tripEventsList, editPointTemplate(data[0]), 'beforeend');
+const renderEvent = (EventListElement, event) => {
+  const EventComponent = new PointView(event).getElement();
+  const eventEditComponent = new PointEditView(event).getElement();
+  const eventButton = EventComponent.querySelector('.event__rollup-btn');
+  const editForm = eventEditComponent.querySelector('form');
+  const closeFormButton = eventEditComponent.querySelector('.event__rollup-btn');
 
+  const replaceCardToForm = () => {
+    EventListElement.replaceChild(eventEditComponent, EventComponent);
+  };
+
+  const replaceFormToCard = () => {
+    EventListElement.replaceChild(EventComponent, eventEditComponent);
+  };
+
+  eventButton.addEventListener('click', () => {
+    replaceCardToForm();
+  });
+
+  editForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    replaceFormToCard();
+  });
+
+  closeFormButton.addEventListener('click', (evt) => {
+    evt.preventDefault();
+    replaceFormToCard();
+  });
+
+  renderElement(EventListElement, EventComponent, RenderPosition.BEFOREEND);
+};
+
+//Отрисовка посещаемых точек
+data.forEach((event) => {
+  renderEvent(PointListComponent.getElement(), event);
+});
+
+//Отрисовка формы создания точки
+renderElement(PointListComponent.getElement(), new CreatePointView(data[0]).getElement(), RenderPosition.AFTERBEGIN);
