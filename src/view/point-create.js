@@ -109,9 +109,9 @@ const createPointTemplate = (data) => {
                   <section class="event__section  event__section--offers">
                   ${getMarkupIsElemHave(offer, '<h3 class="event__section-title  event__section-title--offers">Offers</h3>')}
                     <div class="event__available-offers">
-                      <div class="event__offer-selector">
+
                       ${offersMarkup}
-                      </div>
+                    </div>
                   </section>
 
                   <section class="event__section  event__section--destination">

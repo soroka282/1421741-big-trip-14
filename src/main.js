@@ -19,10 +19,11 @@ const tripEvents = document.querySelector('.trip-events');
 renderElement(tripControlsNavigation, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
 
 //Отрисовка марштрута
-renderElement(tripInfo, new WayPointView(data[0]).getElement(), RenderPosition.BEFOREEND);
+renderElement(tripInfo, new WayPointView(data).getElement(), RenderPosition.BEFOREEND);
+
 
 //Отрисовка стоимости
-renderElement(tripInfo, new CostElementView(data[0]).getElement(), RenderPosition.BEFOREEND);
+renderElement(tripInfo, new CostElementView(data).getElement(), RenderPosition.BEFOREEND);
 
 //Отрисовка фильтра
 renderElement(tripControlsFilters, new FilterPointView().getElement(), RenderPosition.BEFOREEND);
@@ -31,24 +32,24 @@ renderElement(tripControlsFilters, new FilterPointView().getElement(), RenderPos
 renderElement(tripEvents, new SortView().getElement(), RenderPosition.AFTERBEGIN);
 
 //Отрисовка списка точек
-const PointListComponent = new ListView();
+const pointListComponent = new ListView();
 
-renderElement(tripEvents, PointListComponent.getElement(), RenderPosition.BEFOREEND);
+renderElement(tripEvents, pointListComponent.getElement(), RenderPosition.BEFOREEND);
 
 //Отрисовка формы редактирование точки
-const renderEvent = (EventListElement, event) => {
-  const EventComponent = new PointView(event).getElement();
+const renderEvent = (eventListElement, event) => {
+  const eventComponent = new PointView(event).getElement();
   const eventEditComponent = new PointEditView(event).getElement();
-  const eventButton = EventComponent.querySelector('.event__rollup-btn');
+  const eventButton = eventComponent.querySelector('.event__rollup-btn');
   const editForm = eventEditComponent.querySelector('form');
   const closeFormButton = eventEditComponent.querySelector('.event__rollup-btn');
 
   const replaceCardToForm = () => {
-    EventListElement.replaceChild(eventEditComponent, EventComponent);
+    eventListElement.replaceChild(eventEditComponent, eventComponent);
   };
 
   const replaceFormToCard = () => {
-    EventListElement.replaceChild(EventComponent, eventEditComponent);
+    eventListElement.replaceChild(eventComponent, eventEditComponent);
   };
 
   eventButton.addEventListener('click', () => {
@@ -65,13 +66,13 @@ const renderEvent = (EventListElement, event) => {
     replaceFormToCard();
   });
 
-  renderElement(EventListElement, EventComponent, RenderPosition.BEFOREEND);
+  renderElement(eventListElement, eventComponent, RenderPosition.BEFOREEND);
 };
 
 //Отрисовка посещаемых точек
 data.forEach((event) => {
-  renderEvent(PointListComponent.getElement(), event);
+  renderEvent(pointListComponent.getElement(), event);
 });
 
 //Отрисовка формы создания точки
-renderElement(PointListComponent.getElement(), new CreatePointView(data[0]).getElement(), RenderPosition.AFTERBEGIN);
+renderElement(pointListComponent.getElement(), new CreatePointView(data[0]).getElement(), RenderPosition.AFTERBEGIN);

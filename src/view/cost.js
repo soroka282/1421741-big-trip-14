@@ -1,11 +1,18 @@
 import {createElement} from '../util.js';
 
+const getSumMoneyWay = (data) => {
+  const money = data.map((event) => {
+    return event.price;
+  });
+  return money.reduce((a, b) => {
+    return a + b;
+  });
+};
+
 const createCostTemplate = (data) => {
 
-  const {price} = data;
-
   return `<p class="trip-info__cost">
-    Total: &euro;&nbsp;<span class="trip-info__cost-value">${price}</span>
+    Total: &euro;&nbsp;<span class="trip-info__cost-value">${getSumMoneyWay(data)}</span>
   </p>`;
 };
 
