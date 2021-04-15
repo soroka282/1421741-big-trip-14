@@ -1,9 +1,7 @@
-import {getDateFormat} from '../util.js';
-import {getMarkupIsElemHave} from '../util.js';
-import {createPictureMarkup} from './point-edit';
-import {createOfferMarkup} from './point-edit';
+import {getDateFormat, getMarkupIsElemHave, createElement} from '../util.js';
+import {createPictureMarkup, createOfferMarkup} from './point-edit';
 
-export const createPointTemplate = (data) => {
+const createPointTemplate = (data) => {
 
   const {type, name, price, dateFrom, dateTo, offer, destination} = data;
 
@@ -111,9 +109,9 @@ export const createPointTemplate = (data) => {
                   <section class="event__section  event__section--offers">
                   ${getMarkupIsElemHave(offer, '<h3 class="event__section-title  event__section-title--offers">Offers</h3>')}
                     <div class="event__available-offers">
-                      <div class="event__offer-selector">
+
                       ${offersMarkup}
-                      </div>
+                    </div>
                   </section>
 
                   <section class="event__section  event__section--destination">
@@ -129,3 +127,26 @@ export const createPointTemplate = (data) => {
                 </section>
               </form></li>`;
 };
+
+export default class CreatePoint {
+  constructor(data) {
+    this._element = null;
+    this._data = data;
+  }
+
+  getTemplate() {
+    return createPointTemplate(this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

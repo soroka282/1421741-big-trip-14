@@ -1,7 +1,11 @@
-import {getDateISO} from '../util.js';
-import {getDateMonthDay} from '../util.js';
-import {getDateHoursMinutes} from '../util.js';
-import {getDiffDate} from '../util.js';
+import {
+  getDateISO,
+  getDateMonthDay,
+  getDateHoursMinutes,
+  getDiffDate,
+  createElement
+} from '../util.js';
+
 
 const createOfferMarkup = (offer) => {
   return `
@@ -52,4 +56,25 @@ const createEventsTemplate = (data) => {
     </div></li>`;
 };
 
-export {createEventsTemplate};
+export default class Point {
+  constructor(data) {
+    this._data = data;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventsTemplate(this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

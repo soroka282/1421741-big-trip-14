@@ -19,6 +19,7 @@ const CITY = [
   'Amsterdam',
   'Chamonix',
   'Geneva',
+  'St-Petersburg',
 ];
 
 const DESCRIPTION = [
