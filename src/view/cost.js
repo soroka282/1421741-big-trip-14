@@ -4,9 +4,9 @@ const getSumMoneyWay = (data) => {
   const money = data.map((event) => {
     return event.price;
   });
-  return money.reduce((a, b) => {
+  return money.reduce((a , b ) => {
     return a + b;
-  });
+  }, 0);
 };
 
 const createCostTemplate = (data) => {

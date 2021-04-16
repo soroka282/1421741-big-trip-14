@@ -7,6 +7,7 @@ import PointView from './view/events.js';
 import CreatePointView from './view/point-create.js';
 import PointEditView from './view/point-edit.js';
 import ListView from './view/events-list.js';
+import NoEventMsgView from './view/no-events.js';
 import {data} from './mock/data.js';
 import {renderElement, RenderPosition} from './util.js';
 
@@ -34,45 +35,60 @@ renderElement(tripEvents, new SortView().getElement(), RenderPosition.AFTERBEGIN
 //Отрисовка списка точек
 const pointListComponent = new ListView();
 
-renderElement(tripEvents, pointListComponent.getElement(), RenderPosition.BEFOREEND);
+if(data.length == 0) {
+  renderElement(tripEvents, new NoEventMsgView().getElement(), RenderPosition.BEFOREEND);
+} else {
+  renderElement(tripEvents, pointListComponent.getElement(), RenderPosition.BEFOREEND);
 
-//Отрисовка формы редактирование точки
-const renderEvent = (eventListElement, event) => {
-  const eventComponent = new PointView(event).getElement();
-  const eventEditComponent = new PointEditView(event).getElement();
-  const eventButton = eventComponent.querySelector('.event__rollup-btn');
-  const editForm = eventEditComponent.querySelector('form');
-  const closeFormButton = eventEditComponent.querySelector('.event__rollup-btn');
+  //Отрисовка формы редактирование точки
+  const renderEvent = (eventListElement, event) => {
+    const eventComponent = new PointView(event).getElement();
+    const eventEditComponent = new PointEditView(event).getElement();
+    const eventButton = eventComponent.querySelector('.event__rollup-btn');
+    const editForm = eventEditComponent.querySelector('form');
+    const closeFormButton = eventEditComponent.querySelector('.event__rollup-btn');
 
-  const replaceCardToForm = () => {
-    eventListElement.replaceChild(eventEditComponent, eventComponent);
+    const replaceCardToForm = () => {
+      eventListElement.replaceChild(eventEditComponent, eventComponent);
+    };
+
+    const replaceFormToCard = () => {
+      eventListElement.replaceChild(eventComponent, eventEditComponent);
+    };
+
+    const onEventEscKeyDown = (evt) => {
+      if('Escape' === evt.key || 'Esc' === evt.key) {
+        evt.preventDefault();
+        replaceFormToCard();
+        document.removeEventListener('keydown', onEventEscKeyDown);
+      }
+    };
+
+    eventButton.addEventListener('click', () => {
+      replaceCardToForm();
+      document.addEventListener('keydown', onEventEscKeyDown);
+    });
+
+    editForm.addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      replaceFormToCard();
+      document.removeEventListener('keydown', onEventEscKeyDown);
+    });
+
+    closeFormButton.addEventListener('click', (evt) => {
+      evt.preventDefault();
+      replaceFormToCard();
+      document.removeEventListener('keydown', onEventEscKeyDown);
+    });
+
+    renderElement(eventListElement, eventComponent, RenderPosition.BEFOREEND);
   };
 
-  const replaceFormToCard = () => {
-    eventListElement.replaceChild(eventComponent, eventEditComponent);
-  };
-
-  eventButton.addEventListener('click', () => {
-    replaceCardToForm();
+  //Отрисовка посещаемых точек
+  data.forEach((event) => {
+    renderEvent(pointListComponent.getElement(), event);
   });
 
-  editForm.addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    replaceFormToCard();
-  });
-
-  closeFormButton.addEventListener('click', (evt) => {
-    evt.preventDefault();
-    replaceFormToCard();
-  });
-
-  renderElement(eventListElement, eventComponent, RenderPosition.BEFOREEND);
-};
-
-//Отрисовка посещаемых точек
-data.forEach((event) => {
-  renderEvent(pointListComponent.getElement(), event);
-});
-
-//Отрисовка формы создания точки
-renderElement(pointListComponent.getElement(), new CreatePointView(data[0]).getElement(), RenderPosition.AFTERBEGIN);
+  //Отрисовка формы создания точки
+  renderElement(pointListComponent.getElement(), new CreatePointView(data[0]).getElement(), RenderPosition.AFTERBEGIN);
+}
