@@ -54,7 +54,7 @@ if(data.length == 0) {
     };
 
     const onEventEscKeyDown = (evt) => {
-      if('Escape' === evt.key || 'Esc' === evt.key) {
+      if( evt.key === 'Escape' ||  evt.key === 'Esc') {
         evt.preventDefault();
         replaceFormToCard();
         document.removeEventListener('keydown', onEventEscKeyDown);
