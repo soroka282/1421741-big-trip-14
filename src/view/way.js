@@ -1,4 +1,5 @@
-import {getDateMonthDay, createElement} from '../util.js';
+import {getDateMonthDay} from '../utils/events.js';
+import AbstractView from '../abstract.js';
 
 const getWayInfo = (data) => {
   const way = Array.from(new Set(data.map((event) => {
@@ -33,25 +34,13 @@ const createWayTemplate = (data) => {
   </div>`;
 };
 
-export default class WayPoint {
+export default class WayPoint extends AbstractView {
   constructor(data) {
+    super();
     this._data = data;
-    this._element = null;
   }
 
   getTemplate() {
     return createWayTemplate(this._data);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

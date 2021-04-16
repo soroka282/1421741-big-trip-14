@@ -9,7 +9,7 @@ import PointEditView from './view/point-edit.js';
 import ListView from './view/events-list.js';
 import NoEventMsgView from './view/no-events.js';
 import {data} from './mock/data.js';
-import {renderElement, RenderPosition} from './util.js';
+import {renderElement, RenderPosition, replace} from './utils/render.js';
 
 const tripControlsNavigation = document.querySelector('.trip-controls__navigation');
 const tripInfo = document.querySelector('.trip-info');
@@ -17,43 +17,40 @@ const tripControlsFilters = document.querySelector('.trip-controls__filters');
 const tripEvents = document.querySelector('.trip-events');
 
 //Отрисовка меню
-renderElement(tripControlsNavigation, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
+renderElement(tripControlsNavigation, new SiteMenuView(), RenderPosition.BEFOREEND);
 
 //Отрисовка марштрута
-renderElement(tripInfo, new WayPointView(data).getElement(), RenderPosition.BEFOREEND);
+renderElement(tripInfo, new WayPointView(data), RenderPosition.BEFOREEND);
 
 
 //Отрисовка стоимости
-renderElement(tripInfo, new CostElementView(data).getElement(), RenderPosition.BEFOREEND);
+renderElement(tripInfo, new CostElementView(data), RenderPosition.BEFOREEND);
 
 //Отрисовка фильтра
-renderElement(tripControlsFilters, new FilterPointView().getElement(), RenderPosition.BEFOREEND);
+renderElement(tripControlsFilters, new FilterPointView(), RenderPosition.BEFOREEND);
 
 //Отрисовка сортировки
-renderElement(tripEvents, new SortView().getElement(), RenderPosition.AFTERBEGIN);
+renderElement(tripEvents, new SortView(), RenderPosition.AFTERBEGIN);
 
 //Отрисовка списка точек
 const pointListComponent = new ListView();
 
 if(data.length == 0) {
-  renderElement(tripEvents, new NoEventMsgView().getElement(), RenderPosition.BEFOREEND);
+  renderElement(tripEvents, new NoEventMsgView(), RenderPosition.BEFOREEND);
 } else {
-  renderElement(tripEvents, pointListComponent.getElement(), RenderPosition.BEFOREEND);
+  renderElement(tripEvents, pointListComponent, RenderPosition.BEFOREEND);
 
   //Отрисовка формы редактирование точки
   const renderEvent = (eventListElement, event) => {
-    const eventComponent = new PointView(event).getElement();
-    const eventEditComponent = new PointEditView(event).getElement();
-    const eventButton = eventComponent.querySelector('.event__rollup-btn');
-    const editForm = eventEditComponent.querySelector('form');
-    const closeFormButton = eventEditComponent.querySelector('.event__rollup-btn');
+    const eventComponent = new PointView(event);
+    const eventEditComponent = new PointEditView(event);
 
     const replaceCardToForm = () => {
-      eventListElement.replaceChild(eventEditComponent, eventComponent);
+      replace(eventEditComponent, eventComponent);
     };
 
     const replaceFormToCard = () => {
-      eventListElement.replaceChild(eventComponent, eventEditComponent);
+      replace(eventComponent, eventEditComponent);
     };
 
     const onEventEscKeyDown = (evt) => {
@@ -64,19 +61,17 @@ if(data.length == 0) {
       }
     };
 
-    eventButton.addEventListener('click', () => {
+    eventComponent.setEditClickHandler(() => {
       replaceCardToForm();
       document.addEventListener('keydown', onEventEscKeyDown);
     });
 
-    editForm.addEventListener('submit', (evt) => {
-      evt.preventDefault();
+    eventEditComponent.setEditFormClickHandler(() => {
       replaceFormToCard();
       document.removeEventListener('keydown', onEventEscKeyDown);
     });
 
-    closeFormButton.addEventListener('click', (evt) => {
-      evt.preventDefault();
+    eventEditComponent.setCloseFormButtonClickHandler(() => {
       replaceFormToCard();
       document.removeEventListener('keydown', onEventEscKeyDown);
     });
@@ -86,9 +81,9 @@ if(data.length == 0) {
 
   //Отрисовка посещаемых точек
   data.forEach((event) => {
-    renderEvent(pointListComponent.getElement(), event);
+    renderEvent(pointListComponent, event);
   });
 
   //Отрисовка формы создания точки
-  renderElement(pointListComponent.getElement(), new CreatePointView(data[0]).getElement(), RenderPosition.AFTERBEGIN);
+  renderElement(pointListComponent, new CreatePointView(data[0]).getElement(), RenderPosition.AFTERBEGIN);
 }

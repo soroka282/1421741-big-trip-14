@@ -1,5 +1,6 @@
-import {getDateFormat, getMarkupIsElemHave, createElement} from '../util.js';
-import {createPictureMarkup, createOfferMarkup} from './point-edit';
+import {getDateFormat, getMarkupIsElemHave} from '../utils/events.js';
+import {createPictureMarkup, createOfferMarkup} from './point-edit.js';
+import AbstractView from '../abstract.js';
 
 const createPointTemplate = (data) => {
 
@@ -128,25 +129,13 @@ const createPointTemplate = (data) => {
               </form></li>`;
 };
 
-export default class CreatePoint {
+export default class CreatePoint extends AbstractView {
   constructor(data) {
-    this._element = null;
+    super();
     this._data = data;
   }
 
   getTemplate() {
     return createPointTemplate(this._data);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

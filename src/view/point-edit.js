@@ -1,8 +1,9 @@
 import {
   getDateFormat,
-  getMarkupIsElemHave,
-  createElement
-} from '../util.js';
+  getMarkupIsElemHave
+} from '../utils/events.js';
+
+import AbstractView from '../abstract.js';
 
 const createOfferMarkup = (offer) => {
   return `
@@ -152,29 +153,38 @@ const editPointTemplate = (data) => {
               </form></li>`;
 };
 
-export default class PointEdit {
+export default class PointEdit extends AbstractView {
   constructor(data) {
-    this._element = null;
+    super();
     this._data = data;
+    this._editFormClickHandler = this._editFormClickHandler.bind(this);
+    this._closeFormButtonClickHandler = this._closeFormButtonClickHandler.bind(this);
   }
 
   getTemplate() {
     return editPointTemplate(this._data);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _editFormClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editFormClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setEditFormClickHandler(callback) {
+    this._callback.editFormClick = callback;
+    this.getElement().querySelector('form').addEventListener('submit', this._editFormClickHandler);
+  }
+
+  _closeFormButtonClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeFormButtonClick();
+  }
+
+  setCloseFormButtonClickHandler(callback) {
+    this._callback.closeFormButtonClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._closeFormButtonClickHandler);
   }
 }
-
 
 export {
   editPointTemplate,
