@@ -1,6 +1,4 @@
-import {getRandomValue} from '../util.js';
-import {getRandomArray} from '../util.js';
-
+import {getRandomValue, getRandomArray} from '../utils/common.js';
 
 const TYPE = [
   'taxi',

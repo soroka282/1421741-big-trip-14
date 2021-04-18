@@ -1,4 +1,4 @@
-import {createElement} from '../util.js';
+import AbstractView from '../abstract.js';
 
 const getSumMoneyWay = (data) => {
   const money = data.map((event) => {
@@ -16,26 +16,14 @@ const createCostTemplate = (data) => {
   </p>`;
 };
 
-export default class CostElement {
+export default class CostElement extends AbstractView {
   constructor(data) {
+    super();
     this._data = data;
-    this._element = null;
   }
 
   getTemplate() {
     return createCostTemplate(this._data);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 
