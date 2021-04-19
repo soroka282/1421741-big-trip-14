@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import {getRandomValue, getRandomArray} from '../utils/common.js';
 
 const TYPE = [
@@ -83,6 +84,7 @@ const generatePoint = () => {
     name: CITY[getRandomValue(0, CITY.length -1)],
     favorite: Boolean(getRandomValue(0, 1)),
     offer: generateOffers(),
+    id: nanoid(),
     destination: {
       description: getRandomArray(DESCRIPTION).slice(0, 4).join(' '),
       photo: getPictures(),
