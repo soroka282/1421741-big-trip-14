@@ -1,4 +1,5 @@
 import {renderElement, RenderPosition} from '../utils/render.js';
+import {SortType, getSortTimeMax, getSortPriceMax} from '../utils/events.js';
 import ListView from '../view/events-list.js';
 import NoEventMsgView from '../view/no-events.js';
 import SortView from '../view/sort.js';
@@ -12,21 +13,24 @@ export default class Trip {
     this._listPointsComponent = new ListView();
     this._sortComponent = new SortView();
     this._pointPresenter = {};
+    this._currentSortType = SortType.DEFAULT;
 
     this._handlePointChange = this._handlePointChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
+    this._handleSortChange = this._handleSortChange.bind(this);
   }
 
   init(data) {
-    this._data = data;
+    this._data = data.slice();
+    this._sourceData = data.slice();
 
     renderElement(this._tripContainer, this._listPointsComponent, RenderPosition.BEFOREEND);
-
     this._renderContainer();
   }
 
   _handlePointChange(updatePoint) {
     this._data = updateItem(this._data, updatePoint);
+    this._sourceData = updateItem(this._sourceData, updatePoint);
     this._pointPresenter[updatePoint.id].init(updatePoint);
   }
 
@@ -36,8 +40,34 @@ export default class Trip {
       .forEach((presenter) => presenter.resetView());
   }
 
+  _handleSortChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+
+    this._sortPoint(sortType);
+    this._clearPointList();
+    this._renderTripList();
+  }
+
+  _sortPoint(sortType) {
+    switch (sortType) {
+      case SortType.TIME:
+        this._data.sort(getSortTimeMax);
+        break;
+      case SortType.PRICE:
+        this._data.sort(getSortPriceMax);
+        break;
+      default:
+        this._data = this._sourceData.slice();
+    }
+
+    this._currentSortType = sortType;
+  }
+
   _renderSort() {
     renderElement(this._tripContainer, this._sortComponent, RenderPosition.AFTERBEGIN);
+    this._sortComponent.setSortChangeHandler(this._handleSortChange);
   }
 
   _renderPoint(data) {
