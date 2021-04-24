@@ -4,7 +4,7 @@ import {SortType} from '../utils/events.js';
 const createSortTemplate = () => {
   return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
   <div class="trip-sort__item  trip-sort__item--day">
-    <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" data-sort-type="${SortType.DEFAULT}" value="sort-day">
+    <input id="sort-day" class="trip-sort__input visually-hidden" type="radio" name="trip-sort" data-sort-type="${SortType.DEFAULT}" value="sort-day" checked>
     <label class="trip-sort__btn" for="sort-day">Day</label>
   </div>
 
@@ -50,6 +50,6 @@ export default class SortElement extends AbstractView {
 
   setSortChangeHandler(callback) {
     this._callback.sortChange = callback;
-    this.getElement().addEventListener('click', this._sortChangeHandler);
+    this.getElement().addEventListener('change', this._sortChangeHandler);
   }
 }
