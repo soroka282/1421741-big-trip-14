@@ -70,7 +70,6 @@ export default class Point {
     document.addEventListener('keydown', this._onEventEscKeyDown);
     this._changeMode();
     this._mode = Mode.EDITING;
-
   }
 
   _replaceFormToCard() {
