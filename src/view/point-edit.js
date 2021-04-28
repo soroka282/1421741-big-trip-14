@@ -4,7 +4,7 @@ import {
 } from '../utils/events.js';
 
 import Smart from '../smart.js';
-import {generateDestination, CITY, offerExampleStatic, getDescription, getPicture } from '../mock/data.js';
+import { CITY, offerExampleStatic, getDescription, getPicture } from '../mock/data.js';
 
 const createPictureMarkup = (elem) => {
   if (!elem.photo) {
@@ -194,7 +194,6 @@ export default class PointEdit extends Smart {
 
   _editPointDestinationHandler(evt) {
     evt.preventDefault();
-    console.log(this._data);
     this.updateData({
       name: evt.target.value,
       destination: {description: getDescription(), photo: getPicture() },
