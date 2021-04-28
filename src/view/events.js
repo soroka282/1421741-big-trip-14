@@ -8,19 +8,19 @@ import {
 import AbstractView from '../abstract.js';
 
 const createOfferMarkup = (offer) => {
-  return `
+  return offer.map((item) => {
+    return `
   <li class="event__offer">
-    <span class="event__offer-title">${offer.title}</span>
+    <span class="event__offer-title">${item.offers.title}</span>
     &plus;&euro;&nbsp;
-    <span class="event__offer-price">${offer.price}</span>
+    <span class="event__offer-price">${item.offers.price}</span>
   </li>
   `;
+  });
 };
 
 const createEventsTemplate = (data) => {
-  const {type, name, price, dateFrom, dateTo, offer, favorite} = data;
-
-  const offersMarkup = offer.map((item) => createOfferMarkup(item)).join(' ');
+  const {type, name, price, dateFrom, dateTo, favorite} = data;
 
   return `<li class="trip-events__item">
     <div class="event">
@@ -42,7 +42,7 @@ const createEventsTemplate = (data) => {
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-      ${offersMarkup}
+      ${createOfferMarkup(data.offer).join(' ')}
       </ul>
       <button class="event__favorite-btn ${favorite ? 'event__favorite-btn--active' : ''} " type="button">
         <span class="visually-hidden">Add to favorite</span>

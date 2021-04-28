@@ -28,7 +28,7 @@ const getDiffDate = (dateTo, dateFrom) => {
 };
 
 const getMarkupIsElemHave = (elem, markup) => {
-  return elem.length ? markup : '';
+  return elem ? markup : '';
 };
 
 const getSortTimeMax = (elem1, elem2) => {

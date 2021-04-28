@@ -21,6 +21,7 @@ export default class Point {
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._onEventEscKeyDown = this._onEventEscKeyDown.bind(this);
+    this._handleEditFormClose = this._handleEditFormClose.bind(this);
   }
 
   init(data) {
@@ -35,7 +36,7 @@ export default class Point {
     this._pointComponent.setEditClickHandler(this._handleEditClick);
     this._pointComponent.setEditFavoriteClickHandler(this._handleFavoriteClick);
     this._pointEditComponent.setEditFormClickHandler(this._handleFormSubmit);
-    this._pointEditComponent.setCloseFormButtonClickHandler(this._handleFormSubmit);
+    this._pointEditComponent.setCloseFormButtonClickHandler(this._handleEditFormClose);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
       renderElement(this._pointListContainer, this._pointComponent, RenderPosition.BEFOREEND);
@@ -81,6 +82,7 @@ export default class Point {
   _onEventEscKeyDown(evt) {
     if( evt.key === 'Escape' ||  evt.key === 'Esc') {
       evt.preventDefault();
+      this._pointEditComponent.reset(this._data);
       this._replaceFormToCard();
     }
   }
@@ -91,6 +93,12 @@ export default class Point {
 
   _handleFormSubmit() {
     this._replaceFormToCard();
+  }
+
+  _handleEditFormClose() {
+    this._pointEditComponent.reset(this._data);
+    this._replaceFormToCard();
+    document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
   _handleFavoriteClick() {
