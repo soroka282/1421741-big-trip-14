@@ -194,9 +194,10 @@ export default class PointEdit extends Smart {
 
   _editPointDestinationHandler(evt) {
     evt.preventDefault();
+    console.log(this._data);
     this.updateData({
       name: evt.target.value,
-      destination: {description: getDescription(), picture: getPicture() },
+      destination: {description: getDescription(), photo: getPicture() },
     });
   }
 
@@ -205,14 +206,6 @@ export default class PointEdit extends Smart {
 
     this.updateData({
       type: evt.target.value,
-    });
-  }
-
-  _offersHandler(evt) {
-    evt.preventDefault();
-    this.updateData({
-      name: evt.target.value,
-      destination: generateDestination(),
     });
   }
 
