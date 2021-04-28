@@ -4,7 +4,10 @@ import {
 } from '../utils/events.js';
 
 import Smart from '../smart.js';
-import {generateDestination, CITY, offerExampleStatic, getDescription, getPicture } from '../mock/data.js';
+import {CITY, offerExampleStatic, getDescription, getPicture } from '../mock/data.js';
+
+import flatpickr from 'flatpickr';
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createPictureMarkup = (elem) => {
   if (!elem.photo) {
@@ -93,7 +96,7 @@ const editPointTemplate = (data) => {
                           <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
                         </div>
                         <div class="event__type-item">
-                          <input id="event-type-restaurant-1" class="event__type-input ${type.toLowerCase() === 'restaurant' ? 'checked' : ''} visually-hidden" type="radio" name="event-type" value="restaurant">
+                          <input id="event-type-restaurant-1" class="event__type-input visually-hidden" type="radio" name="event-type" value="restaurant" ${type.toLowerCase() === 'restaurant' ? 'checked' : ''}>
                           <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
                         </div>
 
@@ -113,7 +116,7 @@ const editPointTemplate = (data) => {
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getDateFormat(dateFrom)}">
+                    <input class="event__input  event__input--time event-start-time-1" id="event-start-time-1" type="text" name="event-start-time" value="${getDateFormat(dateFrom)}">
                     &mdash;
                     <label class="visually-hidden" for="event-end-time-1">To</label>
                     <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getDateFormat(dateTo)}">
@@ -163,6 +166,7 @@ export default class PointEdit extends Smart {
     super();
     this._data = PointEdit.parsePointToData(data);
     this._offer = offerExampleStatic;
+    this._datepicker = null;
 
     this._editFormClickHandler = this._editFormClickHandler.bind(this);
     this._closeFormButtonClickHandler = this._closeFormButtonClickHandler.bind(this);
@@ -171,7 +175,9 @@ export default class PointEdit extends Smart {
     this._editPointDestinationHandler = this._editPointDestinationHandler.bind(this);
     this._priceInputHandler = this._priceInputHandler.bind(this);
     this._offersSelectionHandler = this._offersSelectionHandler.bind(this);
+    this._dateFromChangeHandler = this._dateFromChangeHandler.bind(this);
 
+    this._setFromDatepicker();
     this._setInnerHandlers();
   }
 
@@ -182,7 +188,33 @@ export default class PointEdit extends Smart {
   restoreHandlers() {
     this._setInnerHandlers();
     this.setEditFormClickHandler(this._callback.editFormClick);
-    this.setCloseFormButtonClickHandler(this._callback.closeFormButtonClick);
+    this._dateFromChangeHandler();
+  }
+
+  _setFromDatepicker() {
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
+
+    this._datepicker = flatpickr(
+      this.getElement().querySelector('.event-start-time-1'),
+      {
+        dateFormat: 'Y/m/d H:i',
+        enableTime: true,
+        time_24hr: true,
+        minDate: this._data.dateFrom,
+        onChange: this._dateFromChangeHandler,
+      },
+    );
+  }
+
+  _dateFromChangeHandler(userDate) {
+    console.log(userDate);
+    console.log(this._data);
+    this.updateData({
+      dateFrom: userDate,
+    }, true);
   }
 
   _setInnerHandlers() {
@@ -212,7 +244,7 @@ export default class PointEdit extends Smart {
     evt.preventDefault();
     this.updateData({
       name: evt.target.value,
-      destination: generateDestination(),
+      destination: {description: getDescription(), photo: getPicture()},
     });
   }
 
@@ -223,6 +255,7 @@ export default class PointEdit extends Smart {
 
     const getFilterOffersForType = () => {
       return offerCopy.filter((elem) => {
+        console.log(elem);
         return this._data.type === elem.type.toLowerCase();
       });
     };
@@ -235,7 +268,6 @@ export default class PointEdit extends Smart {
   reset(data) {
     this.updateData(PointEdit.parsePointToData(data));
   }
-
 
   _priceInputHandler(evt) {
     evt.preventDefault();
