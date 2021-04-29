@@ -26,10 +26,7 @@ const getSelectNameTemplate = (city) => {
 };
 
 const offersMarkup = (offer) => {
-  if(!offer) {
-    return '';
-  }
-  return offer.map((item) => {
+  return offer ? offer.map((item) => {
     return `<div class="event__offer-selector">
                     <input class="event__offer-checkbox  visually-hidden" id="${item.type}-${item.id}" " type="checkbox" name="event-offer-${item.type}"}>
                     <label class="event__offer-label" for="${item.type}-${item.id}">
@@ -38,7 +35,7 @@ const offersMarkup = (offer) => {
                       <span class="even__offer-price">${item.offers.price}</span>
                     </label>
                   </div>`;
-  });
+  }) : '';
 };
 
 const editPointTemplate = (data) => {
@@ -228,7 +225,7 @@ export default class PointEdit extends Smart {
     evt.preventDefault();
     this.updateData({
       name: evt.target.value,
-      destination: {description: getDescription(), picture: getPicture() },
+      destination: {description: getDescription(), photo: getPicture() },
     });
   }
 
