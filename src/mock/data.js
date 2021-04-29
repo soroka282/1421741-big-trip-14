@@ -2,16 +2,16 @@ import { nanoid } from 'nanoid';
 import {getRandomValue, getRandomArray} from '../utils/common.js';
 
 const TYPE = [
-  'taxi',
-  'bus',
-  'train',
-  'ship',
-  'transport',
-  'drive',
-  'flight',
-  'check-in',
-  'sightseeing',
-  'restaurant',
+  'Taxi',
+  'Bus',
+  'Train',
+  'Ship',
+  'Transport',
+  'Drive',
+  'Flight',
+  'Check-in',
+  'Sightseeing',
+  'Restaurant',
 ];
 
 const CITY = [
@@ -35,15 +35,15 @@ const DESCRIPTION = [
   'In rutrum ac purus sit amet tempus.',
 ];
 
-const TITLE = [
-  'Order Uber',
-  'Add luggage',
-  'Switch to comfort',
-  'Add breakfast',
-  'Rent a car',
-];
+// const TITLE = [
+//   'Order Uber',
+//   'Add luggage',
+//   'Switch to comfort',
+//   'Add breakfast',
+//   'Rent a car',
+// ];
 
-const PRICE = [50, 30, 40, 10, 55];
+// const PRICE = [50, 30, 40, 10, 55];
 
 const generatePicture = () => {
   return {
@@ -51,22 +51,104 @@ const generatePicture = () => {
   };
 };
 
-const getPictures = () => {
+const getDescription = () =>{
+  return getRandomArray(DESCRIPTION).slice(0, 4).join(' ');
+};
+
+const getPicture = () => {
   return new Array(getRandomValue(0, 5)).fill().map(() => generatePicture());
 };
 
-const generateOffer = () => {
-  return {
-    price: PRICE[getRandomValue(0, PRICE.length -1)],
-    title: TITLE[getRandomValue(0, TITLE.length -1)],
-  };
-};
+// const generateOffer = () => {
+//   return {
+//     type: TYPE[getRandomValue(0, TYPE.length -1)],
+//     id: nanoid(),
+//     offers: {
+//       price: PRICE[getRandomValue(0, PRICE.length -1)],
+//       title: TITLE[getRandomValue(0, TITLE.length -1)],
+//     },
+//   };
+// };
 
-const generateOffers = () => {
-  return new Array(getRandomValue(0, 4))
-    .fill()
-    .map(() => generateOffer());
-};
+const offerExampleStatic = [
+  {
+    offers: {
+      price: 10,
+      title: 'Order Uber',
+    },
+    type: 'Bus',
+    id: nanoid(),
+  },
+  {
+    offers: {
+      price: 20,
+      title:
+      'Add luggage',
+    },
+    type: 'Bus',
+    id: nanoid(),
+  },
+  {
+    offers: {
+      price: 30,
+      title: 'Rent a car',
+    },
+    type: 'Sightseeing',
+    id: nanoid(),
+  },
+  {
+    offers: {
+      price: 50,
+      title: ' Switch to comfort',
+    },
+    type: 'Ship',
+    id: nanoid(),
+  },
+  {
+    offers: {
+      price: 40,
+      title: ' Switch to comfort',
+    },
+    type: 'Sightseeing',
+    id: nanoid(),
+  },  {
+    offers: {
+      price: 50,
+      title: ' Switch to comfort',
+    },
+    type: 'Ship',
+    id: nanoid(),
+  },
+  {
+    offers: {
+      price: 40,
+      title: 'Add breakfast',
+    },
+    type: 'Sightseeing',
+    id: nanoid(),
+  },  {
+    offers: {
+      price: 550,
+      title: ' Switch to comfort',
+    },
+    type: 'Drive',
+    id: nanoid(),
+  },
+  {
+    offers: {
+      price: 450,
+      title: 'Add luggage',
+    },
+    type: 'Taxi',
+    id: nanoid(),
+  },
+];
+
+// const generateOffers = () => {
+//   return new Array(getRandomValue(0, 5))
+//     .fill()
+//     .map(() => generateOffer());
+// };
 
 const getRandomDate = () => {
   return (Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * getRandomValue(0, 60) * 60 * 1000);
@@ -83,12 +165,12 @@ const generatePoint = () => {
     type: TYPE[getRandomValue(0, TYPE.length -1)],
     name: CITY[getRandomValue(0, CITY.length -1)],
     favorite: Boolean(getRandomValue(0, 1)),
-    offer: generateOffers(),
     id: nanoid(),
-    destination: {
-      description: getRandomArray(DESCRIPTION).slice(0, 4).join(' '),
-      photo: getPictures(),
+    destination:  {
+      description: getDescription(),
+      photo: getPicture(),
     },
+    offer: offerExampleStatic.slice(0, getRandomValue(0, 7)),
   };
 };
 
@@ -101,4 +183,4 @@ const generatePoints = () => {
 
 const data = generatePoints();
 
-export {data};
+export {data, offerExampleStatic, CITY, getDescription, getPicture};
