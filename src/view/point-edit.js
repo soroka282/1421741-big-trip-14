@@ -8,6 +8,7 @@ import {CITY, offerExampleStatic, getDescription, getPicture } from '../mock/dat
 
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+import { SET_FLATPICKR } from '../utils/const.js';
 
 const createPictureMarkup = (elem) => {
   if (!elem.photo) {
@@ -163,7 +164,9 @@ export default class PointEdit extends Smart {
     super();
     this._data = PointEdit.parsePointToData(data);
     this._offer = offerExampleStatic;
-    this._datepicker = null;
+    this._startDatepicker = null;
+    this._endDatepicker = null;
+    this._setDate = null;
 
     this._editFormClickHandler = this._editFormClickHandler.bind(this);
     this._closeFormButtonClickHandler = this._closeFormButtonClickHandler.bind(this);
@@ -172,10 +175,12 @@ export default class PointEdit extends Smart {
     this._editPointDestinationHandler = this._editPointDestinationHandler.bind(this);
     this._priceInputHandler = this._priceInputHandler.bind(this);
     this._offersSelectionHandler = this._offersSelectionHandler.bind(this);
-    this._dateChangeHandler = this._dateChangeHandler.bind(this);
+    this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
+    this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
 
     this._setInnerHandlers();
-    this._setDatepicker();
+    this._setStartDatepicker();
+    this._setEndDatepicker();
   }
 
   getTemplate() {
@@ -186,37 +191,75 @@ export default class PointEdit extends Smart {
     this._setInnerHandlers();
     this.setEditFormClickHandler(this._callback.editFormClick);
     this.setCloseFormButtonClickHandler(this._callback.closeFormButtonClick);
-    this._setDatepicker();
+    this._setStartDatepicker();
+    this._setEndDatepicker();
   }
 
-  _setDatepicker() {
-    if (this._datepicker) {
-      this._datepicker.destroy();
-      this._datepicker = null;
+  _setStartDatepicker() {
+    if (this._startDatepicker) {
+      this._startDatepicker.destroy();
+      this._startDatepicker = null;
     }
 
-    this._datepicker = flatpickr(
-      this.getElement().querySelector('.event__field-group--time'),
-      {
-        mode: 'range',
-        dateFormat: 'Y/m/d H:i',
-        enableTime: true,
-        time_24hr: true,
-        minDate: Date.now(),
-        defaultDate: [this._data.dateFrom, this._data.dateFrom],
-        onChange: this._dateChangeHandler,
-      },
+    this._setDate =  this._data.dateTo;
+
+    this._startDatepicker = flatpickr(
+      this.getElement().querySelector('.event-start-time-1'),
+      Object.assign(
+        {},
+        SET_FLATPICKR,
+        {
+          minDate: Date.now(),
+          defaultDate: this._data.dateFrom,
+          onChange: this._startDateChangeHandler,
+        },
+      ),
     );
   }
 
-  _dateChangeHandler([userDateFrom, userDateTo]) {
-    document.querySelector('.event-start-time-1').value = getDateFormat(Date.parse(userDateFrom));
-    document.querySelector('.event-end-time-1').value = userDateTo ? getDateFormat(Date.parse(userDateTo)) : getDateFormat(this._data.dateTo);
+  _setEndDatepicker() {
+    if (this._endDatepicker) {
+      this._endDatepicker.destroy();
+      this._endDatepicker = null;
+    }
+
+    this._endDatepicker = flatpickr(
+      this.getElement().querySelector('.event-end-time-1'),
+      Object.assign(
+        {},
+        SET_FLATPICKR,
+        {
+          minDate: this._data.dateFrom,
+          onChange: this._endDateChangeHandler,
+        },
+      ),
+    );
+  }
+
+  _startDateChangeHandler([userDate]) {
 
     this.updateData(
       {
-        dateFrom: userDateFrom,
-        dateTo: userDateTo ? userDateTo : this._data.dateTo,
+        dateFrom: userDate,
+      },
+      true,
+    );
+
+    this._endDatepicker.set('minDate', userDate);
+    this._endDatepicker.set('minTime', userDate);
+
+    if(this._setDate <= userDate) {
+      this._endDatepicker.setDate(userDate);
+      this._setDate = userDate;
+      this._data.dateTo = this._setDate;
+    }
+  }
+
+  _endDateChangeHandler([userDate]) {
+
+    this.updateData(
+      {
+        dateTo: userDate,
       },
       true,
     );

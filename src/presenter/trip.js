@@ -1,10 +1,12 @@
 import {renderElement, RenderPosition} from '../utils/render.js';
-import {SortType, getSortTimeMax, getSortPriceMax} from '../utils/events.js';
+import {getSortTimeMax, getSortPriceMax} from '../utils/events.js';
 import ListView from '../view/events-list.js';
 import NoEventMsgView from '../view/no-events.js';
 import SortView from '../view/sort.js';
 import PointPresenter from './point.js';
 import {updateItem} from '../utils/common.js';
+import {SortType} from '../utils/const.js';
+
 
 export default class Trip {
   constructor(tripContainer) {

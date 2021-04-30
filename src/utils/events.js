@@ -3,12 +3,6 @@ import dayjs from 'dayjs';
 const SECONDS_IN_DAY = 86400000;
 const SECONDS_IN_HOURS = 3600000;
 
-const SortType = {
-  DEFAULT: 'default',
-  PRICE: 'price',
-  TIME: 'time',
-};
-
 const getDateFormat = ((date) => dayjs(date).format('YYYY/MM/DD HH:mm'));
 const getDateISO = ((date) => dayjs(date).format('YYYY-MM-DDTHH:mm'));
 const getDateHoursMinutes = ((date) => dayjs(date).format('HH:mm'));
@@ -47,6 +41,5 @@ export {
   getDiffDate,
   getMarkupIsElemHave,
   getSortTimeMax,
-  getSortPriceMax,
-  SortType
+  getSortPriceMax
 };
