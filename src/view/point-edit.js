@@ -113,10 +113,10 @@ const editPointTemplate = (data) => {
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input  event__input--time event-start-time-1" id="event-start-time-1" type="text" name="event-start-time" value="${getDateFormat(dateFrom)}">
+                    <input class="event__input  event__input--time event-start-time-1" id="event-start-time-1" readonly type="text" name="event-start-time" value="${getDateFormat(dateFrom)}">
                     &mdash;
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getDateFormat(dateTo)}">
+                    <input class="event__input  event__input--time event-end-time-1" id="event-end-time-1" readonly type="text" name="event-end-time" value="${getDateFormat(dateTo)}">
                   </div>
 
                   <div class="event__field-group  event__field-group--price">
@@ -172,10 +172,10 @@ export default class PointEdit extends Smart {
     this._editPointDestinationHandler = this._editPointDestinationHandler.bind(this);
     this._priceInputHandler = this._priceInputHandler.bind(this);
     this._offersSelectionHandler = this._offersSelectionHandler.bind(this);
-    this._dateFromChangeHandler = this._dateFromChangeHandler.bind(this);
+    this._dateChangeHandler = this._dateChangeHandler.bind(this);
 
-    this._setFromDatepicker();
     this._setInnerHandlers();
+    this._setDatepicker();
   }
 
   getTemplate() {
@@ -185,33 +185,41 @@ export default class PointEdit extends Smart {
   restoreHandlers() {
     this._setInnerHandlers();
     this.setEditFormClickHandler(this._callback.editFormClick);
-    this._dateFromChangeHandler();
+    this.setCloseFormButtonClickHandler(this._callback.closeFormButtonClick);
+    this._setDatepicker();
   }
 
-  _setFromDatepicker() {
+  _setDatepicker() {
     if (this._datepicker) {
       this._datepicker.destroy();
       this._datepicker = null;
     }
 
     this._datepicker = flatpickr(
-      this.getElement().querySelector('.event-start-time-1'),
+      this.getElement().querySelector('.event__field-group--time'),
       {
+        mode: 'range',
         dateFormat: 'Y/m/d H:i',
         enableTime: true,
         time_24hr: true,
-        minDate: this._data.dateFrom,
-        onChange: this._dateFromChangeHandler,
+        minDate: Date.now(),
+        defaultDate: [this._data.dateFrom, this._data.dateFrom],
+        onChange: this._dateChangeHandler,
       },
     );
   }
 
-  _dateFromChangeHandler(userDate) {
-    console.log(userDate);
-    console.log(this._data);
-    this.updateData({
-      dateFrom: userDate,
-    }, true);
+  _dateChangeHandler([userDateFrom, userDateTo]) {
+    document.querySelector('.event-start-time-1').value = getDateFormat(Date.parse(userDateFrom));
+    document.querySelector('.event-end-time-1').value = userDateTo ? getDateFormat(Date.parse(userDateTo)) : getDateFormat(this._data.dateTo);
+
+    this.updateData(
+      {
+        dateFrom: userDateFrom,
+        dateTo: userDateTo ? userDateTo : this._data.dateTo,
+      },
+      true,
+    );
   }
 
   _setInnerHandlers() {
@@ -252,7 +260,6 @@ export default class PointEdit extends Smart {
 
     const getFilterOffersForType = () => {
       return offerCopy.filter((elem) => {
-        console.log(elem);
         return this._data.type === elem.type.toLowerCase();
       });
     };
