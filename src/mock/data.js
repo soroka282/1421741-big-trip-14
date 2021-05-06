@@ -177,8 +177,7 @@ const generatePoint = () => {
 const generatePoints = () => {
   return new Array(5)
     .fill()
-    .map(() => generatePoint())
-    .sort((currentPoint, nextPoint) => currentPoint.dateFrom - nextPoint.dateFrom);
+    .map(() => generatePoint());
 };
 
 const data = generatePoints();

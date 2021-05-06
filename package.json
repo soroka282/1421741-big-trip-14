@@ -22,8 +22,9 @@
     "node": "10"
   },
   "dependencies": {
-    "dayjs": "1.9.5",
+    "dayjs": "1.9.7",
     "nanoid": "3.1.22",
+    "he": "1.2.0",
     "flatpickr": "4.6.6"
   }
 }

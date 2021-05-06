@@ -33,6 +33,10 @@ const getSortPriceMax = (elem1, elem2) => {
   return elem2.price - elem1.price;
 };
 
+const isDatesEqual = (dateA, dateB) => {
+  return (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'D');
+};
+
 export {
   getDateFormat,
   getDateISO,
@@ -41,5 +45,6 @@ export {
   getDiffDate,
   getMarkupIsElemHave,
   getSortTimeMax,
-  getSortPriceMax
+  getSortPriceMax,
+  isDatesEqual
 };

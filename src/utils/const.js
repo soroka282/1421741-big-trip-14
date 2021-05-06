@@ -1,7 +1,7 @@
 const SortType = {
   DEFAULT: 'default',
-  PRICE: 'price',
-  TIME: 'time',
+  DATE_PRICE: 'price',
+  DATE_TIME: 'time',
 };
 
 const SET_FLATPICKR = {
@@ -10,4 +10,22 @@ const SET_FLATPICKR = {
   time_24hr: true,
 };
 
-export {SortType, SET_FLATPICKR};
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+const UpdatePoint = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+const FilterType = {
+  EVERYTHING: 'EVERYTHING',
+  FUTURE: 'FUTURE',
+  PAST: 'PAST',
+};
+
+export {SortType, SET_FLATPICKR, UserAction, UpdatePoint, FilterType};

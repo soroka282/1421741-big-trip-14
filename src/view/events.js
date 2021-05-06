@@ -20,7 +20,7 @@ const createOfferMarkup = (offer) => {
 };
 
 const createEventsTemplate = (data) => {
-  const {type, name, price, dateFrom, dateTo, favorite} = data;
+  const {type = 'transport', offer = '', name, price, dateFrom, dateTo, favorite} = data;
 
   return `<li class="trip-events__item">
     <div class="event">
@@ -42,7 +42,7 @@ const createEventsTemplate = (data) => {
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-      ${createOfferMarkup(data.offer).join(' ')}
+      ${offer ? createOfferMarkup(offer).join(' ') : ''}
       </ul>
       <button class="event__favorite-btn ${favorite ? 'event__favorite-btn--active' : ''} " type="button">
         <span class="visually-hidden">Add to favorite</span>

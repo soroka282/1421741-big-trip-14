@@ -1,13 +1,13 @@
-import {
-  getDateFormat,
-  getMarkupIsElemHave
-} from '../utils/events.js';
+import {getDateFormat} from '../utils/events.js';
 
 import Smart from '../smart.js';
-import {CITY, offerExampleStatic, getDescription, getPicture } from '../mock/data.js';
+import {CITY, offerExampleStatic, getDescription, getPicture} from '../mock/data.js';
 
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+
+import he from 'he';
+
 import { SET_FLATPICKR } from '../utils/const.js';
 
 const createPictureMarkup = (elem) => {
@@ -41,7 +41,7 @@ const offersMarkup = (offer) => {
 
 const editPointTemplate = (data) => {
 
-  const {type, name, price, dateFrom, dateTo, destination} = data;
+  const {type = 'transport', offer, name, price, dateFrom, dateTo, destination} = data;
 
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -106,7 +106,7 @@ const editPointTemplate = (data) => {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" required value="${name ? he.encode(name) : ''}" list="destination-list-1">
                     <datalist id="destination-list-1">
                       ${getSelectNameTemplate(CITY)}
                     </datalist>
@@ -125,7 +125,7 @@ const editPointTemplate = (data) => {
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${price}">
+                    <input class="event__input  event__input--price" id="event-price-1" type="number" required name="event-price" value="${price ? price : ''}">
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -137,22 +137,20 @@ const editPointTemplate = (data) => {
 
                 <section class="event__details">
 
-                 <section class="event__section  event__section--offers">
-                  ${data.offer.length ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>' : ''}
-                    <div class="event__available-offers">
-                    ${offersMarkup(data.offer).join('')}
-                    </div>
+               <section class="event__section  event__section--offers">
+               ${(offer ? offer.length : '') ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>' : ''}
+                    <div class="event__available-offers">${offer ? offersMarkup(offer).join('') : ''}</div>
                   </section>
 
-                  <section class="event__section  event__section--destination">
-                    ${getMarkupIsElemHave(destination.description, '<h3 class="event__section-title  event__section-title--destination">Destination</h3>')}
-                    <p class="event__destination-description">${getMarkupIsElemHave(destination.description, destination.description)}</p>
+                  ${destination ? `<section class="event__section  event__section--destination">
+                    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+                    <p class="event__destination-description">${destination.description ? destination.description : ''}</p>
                     <div class="event__photos-container">
                       <div class="event__photos-tape">
-                      ${createPictureMarkup(destination)}
+                      ${destination ? createPictureMarkup(destination) : ''}
                       </div>
                     </div>
-                  </section>
+                  </section>` : ''}
 
                 </section>
               </form></li>`;
@@ -169,6 +167,7 @@ export default class PointEdit extends Smart {
     this._setDate = null;
 
     this._editFormClickHandler = this._editFormClickHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._closeFormButtonClickHandler = this._closeFormButtonClickHandler.bind(this);
 
     this._typeToggleHandler = this._typeToggleHandler.bind(this);
@@ -185,6 +184,20 @@ export default class PointEdit extends Smart {
 
   getTemplate() {
     return editPointTemplate(this._data);
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._startDatepicker) {
+      this._startDatepicker.destroy();
+      this._startDatepicker = null;
+    }
+
+    if (this._endDatepicker) {
+      this._endDatepicker.destroy();
+      this._endDatepicker = null;
+    }
   }
 
   restoreHandlers() {
@@ -270,14 +283,33 @@ export default class PointEdit extends Smart {
     this.getElement().querySelector('.event__input--destination').addEventListener('change', this._editPointDestinationHandler);
     this.getElement().querySelector('.event__input--price').addEventListener('input', this._priceInputHandler);
     this.getElement().querySelector('.event__type-group').addEventListener('input', this._offersSelectionHandler);
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
+  }
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(PointEdit.parseDataToPoint(this._data));
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
   }
 
   _editPointDestinationHandler(evt) {
     evt.preventDefault();
-    this.updateData({
-      name: evt.target.value,
-      destination: {description: getDescription(), photo: getPicture() },
-    });
+
+    document.querySelectorAll('#destination-list-1 option')
+      .forEach((city) => {
+        if (city.value !== evt.target.value) {
+          evt.target.setCustomValidity('Select a destination from the list');
+          evt.target.reportValidity();
+        } else {
+          this.updateData({
+            name: evt.target.value,
+            destination: {description: getDescription(), photo: getPicture() },
+          });
+        }
+      });
   }
 
   _typeToggleHandler(evt) {
@@ -322,7 +354,6 @@ export default class PointEdit extends Smart {
     if (evt.target.value < 0) {
       evt.target.setCustomValidity('Must be a positive integer');
       evt.target.reportValidity();
-
     } else {
       this.updateData({
         price: evt.target.value,

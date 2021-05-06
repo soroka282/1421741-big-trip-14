@@ -1,10 +1,14 @@
 import SiteMenuView from './view/menu.js';
 import WayPointView from './view/way.js';
 import CostElementView from './view/cost.js';
-import FilterPointView from './view/filter.js';
+import FilterModel from './model/filter.js';
+
 import {data} from './mock/data.js';
 import TripPresenter from './presenter/trip.js';
+import FilterPresenter from './presenter/filter.js';
 import {renderElement, RenderPosition} from './utils/render.js';
+
+import PointsModel from './model/points.js';
 
 const tripControlsNavigation = document.querySelector('.trip-controls__navigation');
 const tripInfo = document.querySelector('.trip-info');
@@ -17,12 +21,21 @@ renderElement(tripControlsNavigation, new SiteMenuView(), RenderPosition.BEFOREE
 //Отрисовка марштрута
 renderElement(tripInfo, new WayPointView(data), RenderPosition.BEFOREEND);
 
+const pointsModel = new PointsModel();
+pointsModel.setPoints(data);
+
+const filterModel = new FilterModel();
 
 //Отрисовка стоимости
 renderElement(tripInfo, new CostElementView(data), RenderPosition.BEFOREEND);
 
-//Отрисовка фильтра
-renderElement(tripControlsFilters, new FilterPointView(), RenderPosition.BEFOREEND);
+const tripPresenter = new TripPresenter(tripEvents, pointsModel, filterModel);
 
-const tripPresenter = new TripPresenter(tripEvents);
-tripPresenter.init(data);
+const filterPresenter = new FilterPresenter(tripControlsFilters, filterModel, pointsModel);
+filterPresenter.init();
+tripPresenter.init();
+
+document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+  evt.preventDefault();
+  tripPresenter.createPoint();
+});
