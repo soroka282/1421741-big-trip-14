@@ -1,10 +1,14 @@
-import {
-  getDateFormat,
-  getMarkupIsElemHave
-} from '../utils/events.js';
+import {getDateFormat} from '../utils/events.js';
 
 import Smart from '../smart.js';
-import { CITY, offerExampleStatic, getDescription, getPicture } from '../mock/data.js';
+import {CITY, offerExampleStatic, getDescription, getPicture} from '../mock/data.js';
+
+import flatpickr from 'flatpickr';
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+
+import he from 'he';
+
+import { SET_FLATPICKR } from '../utils/const.js';
 
 const createPictureMarkup = (elem) => {
   if (!elem.photo) {
@@ -23,10 +27,7 @@ const getSelectNameTemplate = (city) => {
 };
 
 const offersMarkup = (offer) => {
-  if(!offer) {
-    return '';
-  }
-  return offer.map((item) => {
+  return offer ? offer.map((item) => {
     return `<div class="event__offer-selector">
                     <input class="event__offer-checkbox  visually-hidden" id="${item.type}-${item.id}" " type="checkbox" name="event-offer-${item.type}"}>
                     <label class="event__offer-label" for="${item.type}-${item.id}">
@@ -35,12 +36,12 @@ const offersMarkup = (offer) => {
                       <span class="even__offer-price">${item.offers.price}</span>
                     </label>
                   </div>`;
-  });
+  }) : '';
 };
 
 const editPointTemplate = (data) => {
 
-  const {type, name, price, dateFrom, dateTo, destination} = data;
+  const {type = 'transport', offer, name, price, dateFrom, dateTo, destination} = data;
 
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -93,7 +94,7 @@ const editPointTemplate = (data) => {
                           <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
                         </div>
                         <div class="event__type-item">
-                          <input id="event-type-restaurant-1" class="event__type-input ${type.toLowerCase() === 'restaurant' ? 'checked' : ''} visually-hidden" type="radio" name="event-type" value="restaurant">
+                          <input id="event-type-restaurant-1" class="event__type-input visually-hidden" type="radio" name="event-type" value="restaurant" ${type.toLowerCase() === 'restaurant' ? 'checked' : ''}>
                           <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
                         </div>
 
@@ -105,7 +106,7 @@ const editPointTemplate = (data) => {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" required value="${name ? he.encode(name) : ''}" list="destination-list-1">
                     <datalist id="destination-list-1">
                       ${getSelectNameTemplate(CITY)}
                     </datalist>
@@ -113,10 +114,10 @@ const editPointTemplate = (data) => {
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getDateFormat(dateFrom)}">
+                    <input class="event__input  event__input--time event-start-time-1" id="event-start-time-1" readonly type="text" name="event-start-time" value="${getDateFormat(dateFrom)}">
                     &mdash;
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getDateFormat(dateTo)}">
+                    <input class="event__input  event__input--time event-end-time-1" id="event-end-time-1" readonly type="text" name="event-end-time" value="${getDateFormat(dateTo)}">
                   </div>
 
                   <div class="event__field-group  event__field-group--price">
@@ -124,7 +125,7 @@ const editPointTemplate = (data) => {
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${price}">
+                    <input class="event__input  event__input--price" id="event-price-1" type="number" required name="event-price" value="${price ? price : ''}">
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -136,22 +137,20 @@ const editPointTemplate = (data) => {
 
                 <section class="event__details">
 
-                 <section class="event__section  event__section--offers">
-                  ${data.offer.length ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>' : ''}
-                    <div class="event__available-offers">
-                    ${offersMarkup(data.offer).join('')}
-                    </div>
+               <section class="event__section  event__section--offers">
+               ${(offer ? offer.length : '') ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>' : ''}
+                    <div class="event__available-offers">${offer ? offersMarkup(offer).join('') : ''}</div>
                   </section>
 
-                  <section class="event__section  event__section--destination">
-                    ${getMarkupIsElemHave(destination.description, '<h3 class="event__section-title  event__section-title--destination">Destination</h3>')}
-                    <p class="event__destination-description">${getMarkupIsElemHave(destination.description, destination.description)}</p>
+                  ${destination ? `<section class="event__section  event__section--destination">
+                    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+                    <p class="event__destination-description">${destination.description ? destination.description : ''}</p>
                     <div class="event__photos-container">
                       <div class="event__photos-tape">
-                      ${createPictureMarkup(destination)}
+                      ${destination ? createPictureMarkup(destination) : ''}
                       </div>
                     </div>
-                  </section>
+                  </section>` : ''}
 
                 </section>
               </form></li>`;
@@ -163,26 +162,120 @@ export default class PointEdit extends Smart {
     super();
     this._data = PointEdit.parsePointToData(data);
     this._offer = offerExampleStatic;
+    this._startDatepicker = null;
+    this._endDatepicker = null;
+    this._setDate = null;
 
     this._editFormClickHandler = this._editFormClickHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._closeFormButtonClickHandler = this._closeFormButtonClickHandler.bind(this);
 
     this._typeToggleHandler = this._typeToggleHandler.bind(this);
     this._editPointDestinationHandler = this._editPointDestinationHandler.bind(this);
     this._priceInputHandler = this._priceInputHandler.bind(this);
     this._offersSelectionHandler = this._offersSelectionHandler.bind(this);
+    this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
+    this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setStartDatepicker();
+    this._setEndDatepicker();
   }
 
   getTemplate() {
     return editPointTemplate(this._data);
   }
 
+  removeElement() {
+    super.removeElement();
+
+    if (this._startDatepicker) {
+      this._startDatepicker.destroy();
+      this._startDatepicker = null;
+    }
+
+    if (this._endDatepicker) {
+      this._endDatepicker.destroy();
+      this._endDatepicker = null;
+    }
+  }
+
   restoreHandlers() {
     this._setInnerHandlers();
     this.setEditFormClickHandler(this._callback.editFormClick);
     this.setCloseFormButtonClickHandler(this._callback.closeFormButtonClick);
+    this._setStartDatepicker();
+    this._setEndDatepicker();
+  }
+
+  _setStartDatepicker() {
+    if (this._startDatepicker) {
+      this._startDatepicker.destroy();
+      this._startDatepicker = null;
+    }
+
+    this._setDate =  this._data.dateTo;
+
+    this._startDatepicker = flatpickr(
+      this.getElement().querySelector('.event-start-time-1'),
+      Object.assign(
+        {},
+        SET_FLATPICKR,
+        {
+          minDate: Date.now(),
+          defaultDate: this._data.dateFrom,
+          onChange: this._startDateChangeHandler,
+        },
+      ),
+    );
+  }
+
+  _setEndDatepicker() {
+    if (this._endDatepicker) {
+      this._endDatepicker.destroy();
+      this._endDatepicker = null;
+    }
+
+    this._endDatepicker = flatpickr(
+      this.getElement().querySelector('.event-end-time-1'),
+      Object.assign(
+        {},
+        SET_FLATPICKR,
+        {
+          minDate: this._data.dateFrom,
+          onChange: this._endDateChangeHandler,
+        },
+      ),
+    );
+  }
+
+  _startDateChangeHandler([userDate]) {
+
+    this.updateData(
+      {
+        dateFrom: userDate,
+      },
+      true,
+    );
+
+    this._endDatepicker.set('minDate', userDate);
+    this._endDatepicker.set('minTime', userDate);
+
+    if(this._setDate <= userDate) {
+      this._endDatepicker.setDate(userDate);
+      this._setDate = userDate;
+      this._data.dateTo = this._setDate;
+    }
+  }
+
+  _endDateChangeHandler([userDate]) {
+
+    this.updateData(
+      {
+        dateTo: userDate,
+      },
+      true,
+    );
   }
 
   _setInnerHandlers() {
@@ -190,14 +283,33 @@ export default class PointEdit extends Smart {
     this.getElement().querySelector('.event__input--destination').addEventListener('change', this._editPointDestinationHandler);
     this.getElement().querySelector('.event__input--price').addEventListener('input', this._priceInputHandler);
     this.getElement().querySelector('.event__type-group').addEventListener('input', this._offersSelectionHandler);
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
+  }
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(PointEdit.parseDataToPoint(this._data));
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
   }
 
   _editPointDestinationHandler(evt) {
     evt.preventDefault();
-    this.updateData({
-      name: evt.target.value,
-      destination: {description: getDescription(), photo: getPicture() },
-    });
+
+    document.querySelectorAll('#destination-list-1 option')
+      .forEach((city) => {
+        if (city.value !== evt.target.value) {
+          evt.target.setCustomValidity('Select a destination from the list');
+          evt.target.reportValidity();
+        } else {
+          this.updateData({
+            name: evt.target.value,
+            destination: {description: getDescription(), photo: getPicture() },
+          });
+        }
+      });
   }
 
   _typeToggleHandler(evt) {
@@ -205,6 +317,14 @@ export default class PointEdit extends Smart {
 
     this.updateData({
       type: evt.target.value,
+    });
+  }
+
+  _offersHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      name: evt.target.value,
+      destination: {description: getDescription(), photo: getPicture()},
     });
   }
 
@@ -228,14 +348,12 @@ export default class PointEdit extends Smart {
     this.updateData(PointEdit.parsePointToData(data));
   }
 
-
   _priceInputHandler(evt) {
     evt.preventDefault();
 
     if (evt.target.value < 0) {
       evt.target.setCustomValidity('Must be a positive integer');
       evt.target.reportValidity();
-
     } else {
       this.updateData({
         price: evt.target.value,

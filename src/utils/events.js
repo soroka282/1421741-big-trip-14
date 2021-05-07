@@ -3,12 +3,6 @@ import dayjs from 'dayjs';
 const SECONDS_IN_DAY = 86400000;
 const SECONDS_IN_HOURS = 3600000;
 
-const SortType = {
-  DEFAULT: 'default',
-  PRICE: 'price',
-  TIME: 'time',
-};
-
 const getDateFormat = ((date) => dayjs(date).format('YYYY/MM/DD HH:mm'));
 const getDateISO = ((date) => dayjs(date).format('YYYY-MM-DDTHH:mm'));
 const getDateHoursMinutes = ((date) => dayjs(date).format('HH:mm'));
@@ -39,6 +33,10 @@ const getSortPriceMax = (elem1, elem2) => {
   return elem2.price - elem1.price;
 };
 
+const isDatesEqual = (dateA, dateB) => {
+  return (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'D');
+};
+
 export {
   getDateFormat,
   getDateISO,
@@ -48,5 +46,5 @@ export {
   getMarkupIsElemHave,
   getSortTimeMax,
   getSortPriceMax,
-  SortType
+  isDatesEqual
 };

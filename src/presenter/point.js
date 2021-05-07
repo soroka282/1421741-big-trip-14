@@ -1,6 +1,8 @@
 import PointView from '../view/events.js';
 import PointEditView from '../view/point-edit.js';
 import {renderElement, RenderPosition, replace, remove} from '../utils/render.js';
+import {UserAction, UpdatePoint} from '../utils/const.js';
+import {isDatesEqual} from '../utils/events.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -22,11 +24,11 @@ export default class Point {
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._onEventEscKeyDown = this._onEventEscKeyDown.bind(this);
     this._handleEditFormClose = this._handleEditFormClose.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
   init(data) {
     this._data = data;
-
     const prevPointComponent = this._pointComponent;
     const prevPointEditComponent = this._pointEditComponent;
 
@@ -37,6 +39,7 @@ export default class Point {
     this._pointComponent.setEditFavoriteClickHandler(this._handleFavoriteClick);
     this._pointEditComponent.setEditFormClickHandler(this._handleFormSubmit);
     this._pointEditComponent.setCloseFormButtonClickHandler(this._handleEditFormClose);
+    this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
       renderElement(this._pointListContainer, this._pointComponent, RenderPosition.BEFOREEND);
@@ -91,18 +94,35 @@ export default class Point {
     this._replaceCardToForm();
   }
 
-  _handleFormSubmit() {
+  _handleFormSubmit(update) {
+
+    const isMinorUpdate = !isDatesEqual(this._data.dateFrom, update.dateFrom) || !isDatesEqual(this._data.dateTo, update.dateTo);
+
+    this._changeData(
+      UserAction.UPDATE_POINT,
+      isMinorUpdate ? UpdatePoint.MINOR : UpdatePoint.PATCH,
+      update,
+    );
     this._replaceFormToCard();
+  }
+
+  _handleDeleteClick(point = undefined) {
+    this._changeData(
+      UserAction.DELETE_POINT,
+      UpdatePoint.MINOR,
+      point,
+    );
   }
 
   _handleEditFormClose() {
     this._pointEditComponent.reset(this._data);
     this._replaceFormToCard();
-    document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
   _handleFavoriteClick() {
     this._changeData(
+      UserAction.UPDATE_POINT,
+      UpdatePoint.MINOR,
       Object.assign(
         {},
         this._data,
