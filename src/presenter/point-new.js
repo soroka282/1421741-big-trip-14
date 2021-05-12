@@ -16,11 +16,13 @@ export default class NewPoint {
   }
 
   init() {
+
     if (this._pointEditComponent !== null) {
       return;
     }
 
     this._pointEditComponent = new PointEditView();
+
     this._pointEditComponent.setEditFormClickHandler(this._handleFormSubmit);
     this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
     this._pointEditComponent.setCloseFormButtonClickHandler(this._handleDeleteClick);
@@ -43,12 +45,13 @@ export default class NewPoint {
   _onEventEscKeyDown(evt) {
     if( evt.key === 'Escape' ||  evt.key === 'Esc') {
       evt.preventDefault();
+      this._pointEditComponent._unlockButton();
       this.destroy();
     }
   }
 
   _handleFormSubmit(point) {
-
+    this._pointEditComponent._unlockButton();
     this._changeData(
       UserAction.ADD_POINT,
       UpdatePoint.MINOR,
@@ -58,6 +61,7 @@ export default class NewPoint {
   }
 
   _handleDeleteClick() {
+    this._pointEditComponent._unlockButton();
     this.destroy();
   }
 }

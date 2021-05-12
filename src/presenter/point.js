@@ -91,6 +91,7 @@ export default class Point {
   }
 
   _handleEditClick() {
+    this._pointEditComponent._unlockButton();
     this._replaceCardToForm();
   }
 

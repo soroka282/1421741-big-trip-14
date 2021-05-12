@@ -3,6 +3,7 @@ import {getSortTimeMax, getSortPriceMax} from '../utils/events.js';
 import ListView from '../view/events-list.js';
 import NoEventMsgView from '../view/no-events.js';
 import SortView from '../view/sort.js';
+import PointsView from '../view/events.js';
 import PointPresenter from './point.js';
 import {filter} from '../utils/filters.js';
 import {SortType, UserAction, UpdatePoint, FilterType} from '../utils/const.js';
@@ -15,6 +16,7 @@ export default class Trip {
     this._tripContainer = tripContainer;
     this._noEventComponent = new NoEventMsgView();
     this._listPointsComponent = new ListView();
+    this._pointComponent = new PointsView();
     this._sortComponent = null;
     this._pointPresenter = {};
     this._currentSortType = SortType.DEFAULT;
@@ -24,15 +26,26 @@ export default class Trip {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortChange = this._handleSortChange.bind(this);
 
-    this._pointsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
-
     this._pointNewPresenter = new PointNewPresenter(this._listPointsComponent, this._handleViewAction);
   }
 
   init() {
     renderElement(this._tripContainer, this._listPointsComponent, RenderPosition.BEFOREEND);
+
+    this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
     this._renderContainer();
+  }
+
+  destroy() {
+    this._clearPointList({resetSortType: true});
+
+    remove(this._listPointsComponent);
+
+
+    this._pointsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
   }
 
   createPoint() {
@@ -147,7 +160,7 @@ export default class Trip {
   _renderContainer() {
     const points = this._getPoints();
 
-    if (!points) {
+    if (!points.length) {
       this._renderNoPoint();
       return;
     }
