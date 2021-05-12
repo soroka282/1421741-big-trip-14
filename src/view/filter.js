@@ -29,7 +29,6 @@ export default class FilterPoint extends AbstractView {
     super();
     this._filters = filters;
     this._currentFilter = currentFilterType;
-
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
   }
 

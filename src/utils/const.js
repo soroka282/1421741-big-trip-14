@@ -28,4 +28,9 @@ const FilterType = {
   PAST: 'PAST',
 };
 
-export {SortType, SET_FLATPICKR, UserAction, UpdatePoint, FilterType};
+const MenuItem = {
+  TABLE : 'TABLE',
+  STATS : 'STATS',
+};
+
+export {SortType, SET_FLATPICKR, UserAction, UpdatePoint, FilterType, MenuItem};

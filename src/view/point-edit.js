@@ -374,6 +374,11 @@ export default class PointEdit extends Smart {
   _closeFormButtonClickHandler(evt) {
     evt.preventDefault();
     this._callback.closeFormButtonClick();
+    this._unlockButton();
+  }
+
+  _unlockButton() {
+    document.querySelector('.trip-main__event-add-btn').disabled = false;
   }
 
   setCloseFormButtonClickHandler(callback) {
