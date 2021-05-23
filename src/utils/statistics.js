@@ -17,7 +17,6 @@ export const getTimeFormat = (diff) => {
 
 export const getSumPriceFromType = (data) => {
   const dataSortByPrice = data.slice().sort((a, b) => b.price - a.price);
-
   let res = null;
   res = Object.fromEntries(dataSortByPrice.map((item) => [item.type, 0]));
   dataSortByPrice.forEach((item) => {

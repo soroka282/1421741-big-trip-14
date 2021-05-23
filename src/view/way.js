@@ -3,7 +3,7 @@ import AbstractView from '../abstract.js';
 
 const getWayInfo = (data) => {
   const way = Array.from(new Set(data.map((event) => {
-    return event.name;
+    return event.destination.name;
   })));
   if (way.length > 3) {
     return `${way[0]} &mdash; ... &mdash; ${way[way.length -1]}`;

@@ -3,6 +3,7 @@ import {getSortTimeMax, getSortPriceMax} from '../utils/events.js';
 import ListView from '../view/events-list.js';
 import NoEventMsgView from '../view/no-events.js';
 import SortView from '../view/sort.js';
+import LoadingView from '../view/loading.js';
 import PointsView from '../view/events.js';
 import PointPresenter from './point.js';
 import {filter} from '../utils/filters.js';
@@ -10,7 +11,7 @@ import {SortType, UserAction, UpdatePoint, FilterType} from '../utils/const.js';
 import PointNewPresenter from './point-new.js';
 
 export default class Trip {
-  constructor(tripContainer, pointsModel, filterModel) {
+  constructor(tripContainer, pointsModel, filterModel, api) {
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
     this._tripContainer = tripContainer;
@@ -20,6 +21,9 @@ export default class Trip {
     this._sortComponent = null;
     this._pointPresenter = {};
     this._currentSortType = SortType.DEFAULT;
+    this._loadingComponent = new LoadingView();
+    this._isLoading = true;
+    this._api = api;
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -64,14 +68,17 @@ export default class Trip {
         return filteredPoints.sort(getSortTimeMax);
       case SortType.DATE_PRICE:
         return filteredPoints.sort(getSortPriceMax);
+      default:
+        return filteredPoints.sort((currentPoint, nextPoint) => currentPoint.dateFrom - nextPoint.dateFrom);
     }
-    return filteredPoints.sort((currentPoint, nextPoint) => currentPoint.dateFrom - nextPoint.dateFrom);
   }
 
   _handleViewAction(actionType, updatePoint, update) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this._pointsModel.updatePoint(updatePoint, update);
+        this._api.updatePoint(update).then((response) => {
+          this._pointsModel.updatePoint(updatePoint, response);
+        });
         break;
       case UserAction.ADD_POINT:
         this._pointsModel.addPoint(updatePoint, update);
@@ -94,6 +101,11 @@ export default class Trip {
         break;
       case UpdatePoint.MAJOR:
         this._clearPointList({resetSortType: true});
+        this._renderContainer();
+        break;
+      case UpdatePoint.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
         this._renderContainer();
         break;
     }
@@ -139,6 +151,10 @@ export default class Trip {
     });
   }
 
+  _renderLoading() {
+    renderElement(this._tripContainer, this._loadingComponent, RenderPosition.AFTERBEGIN);
+  }
+
   _clearPointList({resetSortType = false} = {}) {
     this._pointNewPresenter.destroy();
     Object
@@ -147,6 +163,8 @@ export default class Trip {
     this._pointPresenter = {};
 
     remove(this._sortComponent);
+    remove(this._noEventComponent);
+    remove(this._loadingComponent);
 
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
@@ -158,6 +176,11 @@ export default class Trip {
   }
 
   _renderContainer() {
+    if(this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
     const points = this._getPoints();
 
     if (!points.length) {

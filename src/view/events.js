@@ -7,20 +7,20 @@ import {
 
 import AbstractView from '../abstract.js';
 
-const createOfferMarkup = (offer) => {
-  return offer.map((item) => {
+const createOfferMarkup = (offers) => {
+  return offers.map((item) => {
     return `
   <li class="event__offer">
-    <span class="event__offer-title">${item.offers.title}</span>
+    <span class="event__offer-title">${item.title}</span>
     &plus;&euro;&nbsp;
-    <span class="event__offer-price">${item.offers.price}</span>
+    <span class="event__offer-price">${item.price}</span>
   </li>
   `;
   });
 };
 
 const createEventsTemplate = (data) => {
-  const {type = 'transport', offer = '', name, price, dateFrom, dateTo, favorite} = data;
+  const {type = 'transport', offers = '', destination, price, dateFrom, dateTo, favorite} = data;
 
   return `<li class="trip-events__item">
     <div class="event">
@@ -28,7 +28,7 @@ const createEventsTemplate = (data) => {
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type} ${name}</h3>
+      <h3 class="event__title">${type} ${destination.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime=${getDateISO(dateFrom)}>${getDateHoursMinutes(dateFrom)}</time>
@@ -42,7 +42,7 @@ const createEventsTemplate = (data) => {
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-      ${offer ? createOfferMarkup(offer).join(' ') : ''}
+      ${offers ? createOfferMarkup(offers).join(' ') : ''}
       </ul>
       <button class="event__favorite-btn ${favorite ? 'event__favorite-btn--active' : ''} " type="button">
         <span class="visually-hidden">Add to favorite</span>

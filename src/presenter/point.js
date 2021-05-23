@@ -29,6 +29,7 @@ export default class Point {
 
   init(data) {
     this._data = data;
+
     const prevPointComponent = this._pointComponent;
     const prevPointEditComponent = this._pointEditComponent;
 

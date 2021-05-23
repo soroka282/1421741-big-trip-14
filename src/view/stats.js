@@ -1,218 +1,210 @@
 import Smart from '../smart';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {data} from '../mock/data.js';
 import { getQuantityType, getSumPriceFromType, getSumTimeFromType, getTimeFormat, getSortType } from '../utils/statistics';
+import { ChartSet } from '../utils/const';
 
-// Рассчитаем высоту канваса в зависимости от того, сколько данных в него будет передаваться
 const BAR_HEIGHT = 55;
 
-const typesPrice = Object.keys(getSumPriceFromType(data));
-const typesTime = Object.keys(getSumTimeFromType(data));
-const sortType = getSortType(getQuantityType(data));
 
-const sumPriceFromType = Object.values(getSumPriceFromType(data));
-const sumTimeFromType = Object.values(getSumTimeFromType(data));
-const quantityType = Object.values(getQuantityType(data)).sort((a, b) => b - a);
-
-const createMoneyChart = (moneyCtx) => {
+const createMoneyChart = (moneyCtx, data) => {
   return (new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
-    type: 'horizontalBar',
+    type: ChartSet.TYPE,
     data: {
-      labels: typesPrice,
+      labels: Object.keys(getSumPriceFromType(data)),
       datasets: [{
-        data: sumPriceFromType,
-        backgroundColor: '#ffffff',
-        hoverBackgroundColor: '#ffffff',
-        anchor: 'start',
+        data: Object.values(getSumPriceFromType(data)),
+        backgroundColor: ChartSet.COLOR.WHITE,
+        hoverBackgroundColor: ChartSet.COLOR.WHITE,
+        anchor: ChartSet.ANCHOR.START,
       }],
     },
     options: {
       plugins: {
         datalabels: {
           font: {
-            size: 13,
+            size: ChartSet.FONT_SIZE.DATA_LABELS,
           },
-          color: '#000000',
-          anchor: 'end',
-          align: 'start',
+          color: ChartSet.COLOR.BLACK,
+          anchor: ChartSet.ANCHOR.END,
+          align: ChartSet.ALIGN,
           formatter: (val) => `€ ${val}`,
         },
       },
       title: {
-        display: true,
-        text: 'MONEY',
-        fontColor: '#000000',
-        fontSize: 23,
-        position: 'left',
+        display: ChartSet.DISPLAY.TRUE,
+        text: ChartSet.TEXT.MONEY,
+        fontColor: ChartSet.COLOR.BLACK,
+        fontSize: ChartSet.FONT_SIZE.TITLE,
+        position: ChartSet.POSITION,
       },
       scales: {
         yAxes: [{
           ticks: {
-            fontColor: '#000000',
-            padding: 5,
-            fontSize: 13,
+            fontColor: ChartSet.COLOR.BLACK,
+            padding: ChartSet.PADDING,
+            fontSize: ChartSet.FONT_SIZE.SCALES,
           },
           gridLines: {
-            display: false,
-            drawBorder: false,
+            display: ChartSet.DISPLAY.FALSE,
+            drawBorder: ChartSet.DRAW_BORDER.FALSE,
           },
-          barThickness: 44,
+          barThickness: ChartSet.BAR_THICKNESS,
         }],
         xAxes: [{
           ticks: {
-            display: false,
-            beginAtZero: true,
+            display: ChartSet.DISPLAY.FALSE,
+            beginAtZero: ChartSet.BEGIN_AT_ZERO,
           },
           gridLines: {
-            display: false,
-            drawBorder: false,
+            display: ChartSet.DISPLAY.FALSE,
+            drawBorder: ChartSet.DRAW_BORDER.FALSE,
           },
-          minBarLength: 50,
+          minBarLength: ChartSet.MIN_BAR_LENGTH,
         }],
       },
       legend: {
-        display: false,
+        display: ChartSet.DISPLAY.FALSE,
       },
       tooltips: {
-        enabled: false,
+        enabled: ChartSet.TOOLTIPS_ENABLED,
       },
     },
   }));
 };
 
-const createTimeSpendChart = (timeCtx) => {
+const createTimeSpendChart = (timeCtx, data) => {
   return (
     new Chart(timeCtx, {
       plugins: [ChartDataLabels],
-      type: 'horizontalBar',
+      type: ChartSet.TYPE,
       data: {
-        labels: typesTime,
+        labels: Object.keys(getSumTimeFromType(data)),
         datasets: [{
-          data: sumTimeFromType,
-          backgroundColor: '#ffffff',
-          hoverBackgroundColor: '#ffffff',
-          anchor: 'start',
+          data: Object.values(getSumTimeFromType(data)),
+          backgroundColor: ChartSet.COLOR.WHITE,
+          hoverBackgroundColor: ChartSet.COLOR.WHITE,
+          anchor: ChartSet.ANCHOR.START,
         }],
       },
       options: {
         plugins: {
           datalabels: {
             font: {
-              size: 13,
+              size: ChartSet.FONT_SIZE.DATA_LABELS,
             },
-            color: '#000000',
-            anchor: 'end',
-            align: 'start',
+            color: ChartSet.COLOR.BLACK,
+            anchor: ChartSet.ANCHOR.END,
+            align: ChartSet.ALIGN,
             formatter: (val) => `${getTimeFormat(val)}`,
           },
         },
         title: {
-          display: true,
-          text: 'TIME-SPEND',
-          fontColor: '#000000',
-          fontSize: 23,
-          position: 'left',
+          display: ChartSet.DISPLAY.TRUE,
+          text: ChartSet.TEXT.MONEY,
+          fontColor: ChartSet.COLOR.BLACK,
+          fontSize: ChartSet.FONT_SIZE.TITLE,
+          position: ChartSet.POSITION,
         },
         scales: {
           yAxes: [{
             ticks: {
-              fontColor: '#000000',
-              padding: 5,
-              fontSize: 13,
+              fontColor: ChartSet.COLOR.BLACK,
+              padding: ChartSet.PADDING,
+              fontSize: ChartSet.FONT_SIZE.SCALES,
             },
             gridLines: {
-              display: false,
-              drawBorder: false,
+              display: ChartSet.DISPLAY.FALSE,
+              drawBorder: ChartSet.DRAW_BORDER.FALSE,
             },
-            barThickness: 44,
+            barThickness: ChartSet.BAR_THICKNESS,
           }],
           xAxes: [{
             ticks: {
-              display: false,
-              beginAtZero: true,
+              display: ChartSet.DISPLAY.FALSE,
+              beginAtZero: ChartSet.BEGIN_AT_ZERO,
             },
             gridLines: {
-              display: false,
-              drawBorder: false,
+              display: ChartSet.DISPLAY.FALSE,
+              drawBorder: ChartSet.DRAW_BORDER.FALSE,
             },
-            minBarLength: 50,
+            minBarLength: ChartSet.MIN_BAR_LENGTH,
           }],
         },
         legend: {
-          display: false,
+          display: ChartSet.DISPLAY.FALSE,
         },
         tooltips: {
-          enabled: false,
+          enabled: ChartSet.TOOLTIPS_ENABLED,
         },
       },
     }));
 };
 
-const createTypeChart = (typeCtx) => {
+const createTypeChart = (typeCtx, data) => {
   return (
     new Chart(typeCtx, {
       plugins: [ChartDataLabels],
-      type: 'horizontalBar',
+      type: ChartSet.TYPE,
       data: {
-        labels: sortType,
+        labels: getSortType(getQuantityType(data)),
         datasets: [{
-          data: quantityType,
-          backgroundColor: '#ffffff',
-          hoverBackgroundColor: '#ffffff',
-          anchor: 'start',
+          data: Object.values(getQuantityType(data)).sort((a, b) => b - a),
+          backgroundColor: ChartSet.COLOR.WHITE,
+          hoverBackgroundColor: ChartSet.COLOR.WHITE,
+          anchor: ChartSet.ANCHOR.START,
         }],
       },
       options: {
         plugins: {
           datalabels: {
             font: {
-              size: 13,
+              size: ChartSet.FONT_SIZE.DATA_LABELS,
             },
-            color: '#000000',
-            anchor: 'end',
-            align: 'start',
+            color: ChartSet.COLOR.BLACK,
+            anchor: ChartSet.ANCHOR.END,
+            align: ChartSet.ALIGN,
             formatter: (val) => `${val}x`,
           },
         },
         title: {
-          display: true,
-          text: 'TYPE',
-          fontColor: '#000000',
-          fontSize: 23,
-          position: 'left',
+          display: ChartSet.DISPLAY.TRUE,
+          text: ChartSet.TEXT.TYPE,
+          fontColor: ChartSet.COLOR.BLACK,
+          fontSize: ChartSet.FONT_SIZE.TITLE,
+          position: ChartSet.POSITION,
         },
         scales: {
           yAxes: [{
             ticks: {
-              fontColor: '#000000',
-              padding: 5,
-              fontSize: 13,
+              fontColor: ChartSet.COLOR.BLACK,
+              padding: ChartSet.PADDING,
+              fontSize: ChartSet.FONT_SIZE.SCALES,
             },
             gridLines: {
-              display: false,
-              drawBorder: false,
+              display: ChartSet.DISPLAY.FALSE,
+              drawBorder: ChartSet.DRAW_BORDER.FALSE,
             },
-            barThickness: 44,
+            barThickness: ChartSet.BAR_THICKNESS,
           }],
           xAxes: [{
             ticks: {
-              display: false,
-              beginAtZero: true,
+              display: ChartSet.DISPLAY.FALSE,
+              beginAtZero: ChartSet.BEGIN_AT_ZERO,
             },
             gridLines: {
-              display: false,
-              drawBorder: false,
+              display: ChartSet.DISPLAY.FALSE,
+              drawBorder: ChartSet.DRAW_BORDER.FALSE,
             },
-            minBarLength: 50,
+            minBarLength: ChartSet.MIN_BAR_LENGTH,
           }],
         },
         legend: {
-          display: false,
+          display: ChartSet.DISPLAY.FALSE,
         },
         tooltips: {
-          enabled: false,
+          enabled: ChartSet.TOOLTIPS_ENABLED,
         },
       },
     }));
@@ -246,8 +238,17 @@ export default class Stats extends Smart {
 
     this._setCharts();
   }
+
+  removeElement() {
+    super.removeElement();
+  }
+
   getTemplate() {
-    return createTemplateStatistic();
+    return createTemplateStatistic(this._data);
+  }
+
+  restoreHandlers() {
+    this._setCharts();
   }
 
   _setCharts() {

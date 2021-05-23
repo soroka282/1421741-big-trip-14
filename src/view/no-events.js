@@ -7,7 +7,7 @@ const createMsgTemplate = () => {
 };
 
 export default class NoEventMsg extends AbstractView {
-  getElement() {
+  getTemplate() {
     return createMsgTemplate();
   }
 }
