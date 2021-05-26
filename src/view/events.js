@@ -2,10 +2,11 @@ import {
   getDateISO,
   getDateMonthDay,
   getDateHoursMinutes,
-  getDiffDate
+  getTimeFormat
 } from '../utils/events.js';
 
 import AbstractView from '../abstract.js';
+import dayjs from 'dayjs';
 
 const createOfferMarkup = (offers) => {
   return offers.map((item) => {
@@ -20,7 +21,9 @@ const createOfferMarkup = (offers) => {
 };
 
 const createEventsTemplate = (data) => {
-  const {type = 'transport', offers = '', destination, price, dateFrom, dateTo, favorite} = data;
+  const {type = 'transport', offers, destination, price, dateFrom, dateTo, favorite} = data;
+
+  const duration = dayjs(dateTo).diff(dayjs(dateFrom), 'm');
 
   return `<li class="trip-events__item">
     <div class="event">
@@ -35,7 +38,7 @@ const createEventsTemplate = (data) => {
           &mdash;
           <time class="event__end-time" datetime=${getDateISO(dateTo)}>${getDateHoursMinutes(dateTo)}</time>
         </p>
-        <p class="event__duration">${getDiffDate(dateTo, dateFrom)}</p>
+        <p class="event__duration">${getTimeFormat(duration)}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${price}</span>

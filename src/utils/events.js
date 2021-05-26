@@ -1,7 +1,24 @@
 import dayjs from 'dayjs';
 
-const SECONDS_IN_DAY = 86400000;
-const SECONDS_IN_HOURS = 3600000;
+export const getTimeFormat = (time) => {
+  const day = Math.floor(time / 60 / 24);
+  const hour = Math.floor((time - day * 24 * 60) / 60);
+  const minute = time % 60;
+
+  if (day) {
+    return `${day}D ${hour ? hour : '00'}H ${minute ? minute : '00'}M`;
+  }
+
+  if (hour) {
+    return `${hour}H ${minute ? minute : '00'}M`;
+  }
+
+  if (minute) {
+    return `${minute}M`;
+  }
+
+  return '00M';
+};
 
 const getDateFormat = ((date) => dayjs(date).format('YYYY/MM/DD HH:mm'));
 const getDateISO = ((date) => dayjs(date).format('YYYY-MM-DDTHH:mm'));
@@ -10,15 +27,7 @@ const getDateMonthDay = ((date) => dayjs(date).format('MMM DD'));
 
 const getDiffDate = (dateTo, dateFrom) => {
   const diff = dayjs(dateTo).diff(dayjs(dateFrom));
-  if (diff === 0) {
-    return '';
-  } if (diff > SECONDS_IN_DAY) {
-    return dayjs(diff).format('DD') + 'D ' + dayjs(diff).format('hh') + 'H ' + dayjs(diff).format('mm') + 'M';
-  } if (diff <= SECONDS_IN_HOURS) {
-    return dayjs(diff).format('mm') + 'M';
-  } if (diff <= SECONDS_IN_DAY) {
-    return dayjs(diff).format('hh') + 'H ' + dayjs(diff).format('mm') + 'M';
-  }
+  return diff;
 };
 
 const getMarkupIsElemHave = (elem, markup) => {

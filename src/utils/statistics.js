@@ -1,52 +1,38 @@
 import dayjs from 'dayjs';
 
-const SECONDS_IN_DAY = 86400000;
-const SECONDS_IN_HOURS = 3600000;
-
-export const getTimeFormat = (diff) => {
-  if (diff === 0) {
-    return '';
-  } if (diff > SECONDS_IN_DAY) {
-    return dayjs(diff).format('DD') + 'D ' + dayjs(diff).format('hh') + 'H ' + dayjs(diff).format('mm') + 'M';
-  } if (diff <= SECONDS_IN_HOURS) {
-    return dayjs(diff).format('mm') + 'M';
-  } if (diff <= SECONDS_IN_DAY) {
-    return dayjs(diff).format('hh') + 'H ' + dayjs(diff).format('mm') + 'M';
-  }
+export const getType = (data) => {
+  return Array.from(new Set(data.map((i) => {
+    return i.type;
+  })));
 };
 
-export const getSumPriceFromType = (data) => {
-  const dataSortByPrice = data.slice().sort((a, b) => b.price - a.price);
-  let res = null;
-  res = Object.fromEntries(dataSortByPrice.map((item) => [item.type, 0]));
-  dataSortByPrice.forEach((item) => {
-    res[item.type] += item.price;
+export const getPrice = (points) => {
+  const data = Array(getType(points).length).fill(0);
+  getType(points).map((type, index) => {
+    points.filter((point) => {return point.type === type;})
+      .map((item) => {
+        data[index] += item.price;
+      });
   });
-  return res;
+  return data;
 };
 
-export const getSumTimeFromType = (data) => {
-  const dataSortByTime = data.slice()
-    .sort((elem1, elem2) => dayjs(elem2.dateTo).
-      diff(dayjs(elem2.dateFrom)) - dayjs(elem1.dateTo).diff(dayjs(elem1.dateFrom)));
 
-  let res = null;
-  res = Object.fromEntries(dataSortByTime.map((item) => [item.type, 0]));
-  dataSortByTime.forEach((item) => {
-    res[item.type] += (item.dateTo - item.dateFrom);
+export const getCountType = (points) => {
+  const data = Array(getType(points).length).fill(0);
+  getType(points).map((type, index) => {
+    points.filter((i) => {return i.type === type;})
+      .map(() => {
+        data[index] += 1;
+      });
   });
-  return res;
+  return data;
 };
 
-export const getQuantityType = (data) => {
-  let res = null;
-  res = Object.fromEntries(data.map((item) => [item.type, 0]));
-  data.forEach((item) => {
-    res[item.type] += 1;
-  });
-  return res;
+export const getDuration  = (points, type) => {
+  const allPointsTypes = points.filter((point) => point.type === type);
+  const duration = allPointsTypes.reduce((totalDuration, point) => {
+    return totalDuration + dayjs(point.dateTo).diff(dayjs(point.dateFrom), 'm');
+  }, 0);
+  return duration;
 };
-
-export const getSortType = ((val) => {
-  return Object.keys(val).sort((a, b) => val[b] - val[a]);
-});

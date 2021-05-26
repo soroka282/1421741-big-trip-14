@@ -1,20 +1,27 @@
 import Smart from '../smart';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { getQuantityType, getSumPriceFromType, getSumTimeFromType, getTimeFormat, getSortType } from '../utils/statistics';
-import { ChartSet } from '../utils/const';
+import { getType, getPrice, getCountType, getDuration} from '../utils/statistics';
+import { ChartSet} from '../utils/const';
+import {getTimeFormat} from '../utils/events.js';
 
 const BAR_HEIGHT = 55;
 
+const createMoneyChart = (moneyCtx, statistics) => {
+  const sortByPrice = statistics.sort((elem1, elem2) => {
+    return elem2.price - elem1.price;
+  });
 
-const createMoneyChart = (moneyCtx, data) => {
+  const type = sortByPrice.map((i) => i.type);
+  const price = sortByPrice.map((i) => i.price);
+
   return (new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
     type: ChartSet.TYPE,
     data: {
-      labels: Object.keys(getSumPriceFromType(data)),
+      labels: type,
       datasets: [{
-        data: Object.values(getSumPriceFromType(data)),
+        data: price,
         backgroundColor: ChartSet.COLOR.WHITE,
         hoverBackgroundColor: ChartSet.COLOR.WHITE,
         anchor: ChartSet.ANCHOR.START,
@@ -74,15 +81,22 @@ const createMoneyChart = (moneyCtx, data) => {
   }));
 };
 
-const createTimeSpendChart = (timeCtx, data) => {
+
+const createTimeSpendChart = (timeCtx, statistics) => {
+  const sortByTime = statistics.sort((elem1, elem2) => {
+    return elem2.duration - elem1.duration;
+  });
+  const type = sortByTime.map((i) => i.type);
+  const time = sortByTime.map((i) => i.duration);
+
   return (
     new Chart(timeCtx, {
       plugins: [ChartDataLabels],
       type: ChartSet.TYPE,
       data: {
-        labels: Object.keys(getSumTimeFromType(data)),
+        labels: type,
         datasets: [{
-          data: Object.values(getSumTimeFromType(data)),
+          data: time,
           backgroundColor: ChartSet.COLOR.WHITE,
           hoverBackgroundColor: ChartSet.COLOR.WHITE,
           anchor: ChartSet.ANCHOR.START,
@@ -102,7 +116,7 @@ const createTimeSpendChart = (timeCtx, data) => {
         },
         title: {
           display: ChartSet.DISPLAY.TRUE,
-          text: ChartSet.TEXT.MONEY,
+          text: ChartSet.TEXT.TIME_SPEND,
           fontColor: ChartSet.COLOR.BLACK,
           fontSize: ChartSet.FONT_SIZE.TITLE,
           position: ChartSet.POSITION,
@@ -142,15 +156,22 @@ const createTimeSpendChart = (timeCtx, data) => {
     }));
 };
 
-const createTypeChart = (typeCtx, data) => {
+const createTypeChart = (typeCtx, statistics) => {
+  const sortByType = statistics.sort((elem1, elem2) => {
+    return elem2.count - elem1.count;
+  });
+  const type = sortByType.map((i) => i.type);
+  const count = sortByType.map((i) => i.count);
+
+
   return (
     new Chart(typeCtx, {
       plugins: [ChartDataLabels],
       type: ChartSet.TYPE,
       data: {
-        labels: getSortType(getQuantityType(data)),
+        labels: type,
         datasets: [{
-          data: Object.values(getQuantityType(data)).sort((a, b) => b - a),
+          data: count,
           backgroundColor: ChartSet.COLOR.WHITE,
           hoverBackgroundColor: ChartSet.COLOR.WHITE,
           anchor: ChartSet.ANCHOR.START,
@@ -260,8 +281,21 @@ export default class Stats extends Smart {
     typeCtx.height = BAR_HEIGHT * 5;
     timeCtx.height = BAR_HEIGHT * 5;
 
-    this._moneyChart = createMoneyChart(moneyCtx, this._data);
-    this._timeChart = createTypeChart(timeCtx, this._data);
-    this._typeChart = createTimeSpendChart(typeCtx, this._data);
+    const typeStat = getType(this._data);
+    const priceStat = getPrice(this._data);
+    const countTypeStat = getCountType(this._data);
+    const durationStat = typeStat.map((item) => getDuration(this._data, item));
+
+
+    const statistics = typeStat.map((item, index) => ({
+      type: item,
+      price: priceStat[index],
+      count: countTypeStat[index],
+      duration: durationStat[index],
+    }));
+
+    this._moneyChart = createMoneyChart(moneyCtx, statistics);
+    this._timeChart = createTypeChart(timeCtx, statistics);
+    this._typeChart = createTimeSpendChart(typeCtx, statistics);
   }
 }
