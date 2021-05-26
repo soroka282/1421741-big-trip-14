@@ -1,218 +1,231 @@
 import Smart from '../smart';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {data} from '../mock/data.js';
-import { getQuantityType, getSumPriceFromType, getSumTimeFromType, getTimeFormat, getSortType } from '../utils/statistics';
+import { getType, getPrice, getCountType, getDuration} from '../utils/statistics';
+import { ChartSet} from '../utils/const';
+import {getTimeFormat} from '../utils/events.js';
 
-// Рассчитаем высоту канваса в зависимости от того, сколько данных в него будет передаваться
 const BAR_HEIGHT = 55;
 
-const typesPrice = Object.keys(getSumPriceFromType(data));
-const typesTime = Object.keys(getSumTimeFromType(data));
-const sortType = getSortType(getQuantityType(data));
+const createMoneyChart = (moneyCtx, statistics) => {
+  const sortByPrice = statistics.sort((elem1, elem2) => {
+    return elem2.price - elem1.price;
+  });
 
-const sumPriceFromType = Object.values(getSumPriceFromType(data));
-const sumTimeFromType = Object.values(getSumTimeFromType(data));
-const quantityType = Object.values(getQuantityType(data)).sort((a, b) => b - a);
+  const type = sortByPrice.map((i) => i.type);
+  const price = sortByPrice.map((i) => i.price);
 
-const createMoneyChart = (moneyCtx) => {
   return (new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
-    type: 'horizontalBar',
+    type: ChartSet.TYPE,
     data: {
-      labels: typesPrice,
+      labels: type,
       datasets: [{
-        data: sumPriceFromType,
-        backgroundColor: '#ffffff',
-        hoverBackgroundColor: '#ffffff',
-        anchor: 'start',
+        data: price,
+        backgroundColor: ChartSet.COLOR.WHITE,
+        hoverBackgroundColor: ChartSet.COLOR.WHITE,
+        anchor: ChartSet.ANCHOR.START,
       }],
     },
     options: {
       plugins: {
         datalabels: {
           font: {
-            size: 13,
+            size: ChartSet.FONT_SIZE.DATA_LABELS,
           },
-          color: '#000000',
-          anchor: 'end',
-          align: 'start',
+          color: ChartSet.COLOR.BLACK,
+          anchor: ChartSet.ANCHOR.END,
+          align: ChartSet.ALIGN,
           formatter: (val) => `€ ${val}`,
         },
       },
       title: {
-        display: true,
-        text: 'MONEY',
-        fontColor: '#000000',
-        fontSize: 23,
-        position: 'left',
+        display: ChartSet.DISPLAY.TRUE,
+        text: ChartSet.TEXT.MONEY,
+        fontColor: ChartSet.COLOR.BLACK,
+        fontSize: ChartSet.FONT_SIZE.TITLE,
+        position: ChartSet.POSITION,
       },
       scales: {
         yAxes: [{
           ticks: {
-            fontColor: '#000000',
-            padding: 5,
-            fontSize: 13,
+            fontColor: ChartSet.COLOR.BLACK,
+            padding: ChartSet.PADDING,
+            fontSize: ChartSet.FONT_SIZE.SCALES,
           },
           gridLines: {
-            display: false,
-            drawBorder: false,
+            display: ChartSet.DISPLAY.FALSE,
+            drawBorder: ChartSet.DRAW_BORDER.FALSE,
           },
-          barThickness: 44,
+          barThickness: ChartSet.BAR_THICKNESS,
         }],
         xAxes: [{
           ticks: {
-            display: false,
-            beginAtZero: true,
+            display: ChartSet.DISPLAY.FALSE,
+            beginAtZero: ChartSet.BEGIN_AT_ZERO,
           },
           gridLines: {
-            display: false,
-            drawBorder: false,
+            display: ChartSet.DISPLAY.FALSE,
+            drawBorder: ChartSet.DRAW_BORDER.FALSE,
           },
-          minBarLength: 50,
+          minBarLength: ChartSet.MIN_BAR_LENGTH,
         }],
       },
       legend: {
-        display: false,
+        display: ChartSet.DISPLAY.FALSE,
       },
       tooltips: {
-        enabled: false,
+        enabled: ChartSet.TOOLTIPS_ENABLED,
       },
     },
   }));
 };
 
-const createTimeSpendChart = (timeCtx) => {
+
+const createTimeSpendChart = (timeCtx, statistics) => {
+  const sortByTime = statistics.sort((elem1, elem2) => {
+    return elem2.duration - elem1.duration;
+  });
+  const type = sortByTime.map((i) => i.type);
+  const time = sortByTime.map((i) => i.duration);
+
   return (
     new Chart(timeCtx, {
       plugins: [ChartDataLabels],
-      type: 'horizontalBar',
+      type: ChartSet.TYPE,
       data: {
-        labels: typesTime,
+        labels: type,
         datasets: [{
-          data: sumTimeFromType,
-          backgroundColor: '#ffffff',
-          hoverBackgroundColor: '#ffffff',
-          anchor: 'start',
+          data: time,
+          backgroundColor: ChartSet.COLOR.WHITE,
+          hoverBackgroundColor: ChartSet.COLOR.WHITE,
+          anchor: ChartSet.ANCHOR.START,
         }],
       },
       options: {
         plugins: {
           datalabels: {
             font: {
-              size: 13,
+              size: ChartSet.FONT_SIZE.DATA_LABELS,
             },
-            color: '#000000',
-            anchor: 'end',
-            align: 'start',
+            color: ChartSet.COLOR.BLACK,
+            anchor: ChartSet.ANCHOR.END,
+            align: ChartSet.ALIGN,
             formatter: (val) => `${getTimeFormat(val)}`,
           },
         },
         title: {
-          display: true,
-          text: 'TIME-SPEND',
-          fontColor: '#000000',
-          fontSize: 23,
-          position: 'left',
+          display: ChartSet.DISPLAY.TRUE,
+          text: ChartSet.TEXT.TIME_SPEND,
+          fontColor: ChartSet.COLOR.BLACK,
+          fontSize: ChartSet.FONT_SIZE.TITLE,
+          position: ChartSet.POSITION,
         },
         scales: {
           yAxes: [{
             ticks: {
-              fontColor: '#000000',
-              padding: 5,
-              fontSize: 13,
+              fontColor: ChartSet.COLOR.BLACK,
+              padding: ChartSet.PADDING,
+              fontSize: ChartSet.FONT_SIZE.SCALES,
             },
             gridLines: {
-              display: false,
-              drawBorder: false,
+              display: ChartSet.DISPLAY.FALSE,
+              drawBorder: ChartSet.DRAW_BORDER.FALSE,
             },
-            barThickness: 44,
+            barThickness: ChartSet.BAR_THICKNESS,
           }],
           xAxes: [{
             ticks: {
-              display: false,
-              beginAtZero: true,
+              display: ChartSet.DISPLAY.FALSE,
+              beginAtZero: ChartSet.BEGIN_AT_ZERO,
             },
             gridLines: {
-              display: false,
-              drawBorder: false,
+              display: ChartSet.DISPLAY.FALSE,
+              drawBorder: ChartSet.DRAW_BORDER.FALSE,
             },
-            minBarLength: 50,
+            minBarLength: ChartSet.MIN_BAR_LENGTH,
           }],
         },
         legend: {
-          display: false,
+          display: ChartSet.DISPLAY.FALSE,
         },
         tooltips: {
-          enabled: false,
+          enabled: ChartSet.TOOLTIPS_ENABLED,
         },
       },
     }));
 };
 
-const createTypeChart = (typeCtx) => {
+const createTypeChart = (typeCtx, statistics) => {
+  const sortByType = statistics.sort((elem1, elem2) => {
+    return elem2.count - elem1.count;
+  });
+  const type = sortByType.map((i) => i.type);
+  const count = sortByType.map((i) => i.count);
+
+
   return (
     new Chart(typeCtx, {
       plugins: [ChartDataLabels],
-      type: 'horizontalBar',
+      type: ChartSet.TYPE,
       data: {
-        labels: sortType,
+        labels: type,
         datasets: [{
-          data: quantityType,
-          backgroundColor: '#ffffff',
-          hoverBackgroundColor: '#ffffff',
-          anchor: 'start',
+          data: count,
+          backgroundColor: ChartSet.COLOR.WHITE,
+          hoverBackgroundColor: ChartSet.COLOR.WHITE,
+          anchor: ChartSet.ANCHOR.START,
         }],
       },
       options: {
         plugins: {
           datalabels: {
             font: {
-              size: 13,
+              size: ChartSet.FONT_SIZE.DATA_LABELS,
             },
-            color: '#000000',
-            anchor: 'end',
-            align: 'start',
+            color: ChartSet.COLOR.BLACK,
+            anchor: ChartSet.ANCHOR.END,
+            align: ChartSet.ALIGN,
             formatter: (val) => `${val}x`,
           },
         },
         title: {
-          display: true,
-          text: 'TYPE',
-          fontColor: '#000000',
-          fontSize: 23,
-          position: 'left',
+          display: ChartSet.DISPLAY.TRUE,
+          text: ChartSet.TEXT.TYPE,
+          fontColor: ChartSet.COLOR.BLACK,
+          fontSize: ChartSet.FONT_SIZE.TITLE,
+          position: ChartSet.POSITION,
         },
         scales: {
           yAxes: [{
             ticks: {
-              fontColor: '#000000',
-              padding: 5,
-              fontSize: 13,
+              fontColor: ChartSet.COLOR.BLACK,
+              padding: ChartSet.PADDING,
+              fontSize: ChartSet.FONT_SIZE.SCALES,
             },
             gridLines: {
-              display: false,
-              drawBorder: false,
+              display: ChartSet.DISPLAY.FALSE,
+              drawBorder: ChartSet.DRAW_BORDER.FALSE,
             },
-            barThickness: 44,
+            barThickness: ChartSet.BAR_THICKNESS,
           }],
           xAxes: [{
             ticks: {
-              display: false,
-              beginAtZero: true,
+              display: ChartSet.DISPLAY.FALSE,
+              beginAtZero: ChartSet.BEGIN_AT_ZERO,
             },
             gridLines: {
-              display: false,
-              drawBorder: false,
+              display: ChartSet.DISPLAY.FALSE,
+              drawBorder: ChartSet.DRAW_BORDER.FALSE,
             },
-            minBarLength: 50,
+            minBarLength: ChartSet.MIN_BAR_LENGTH,
           }],
         },
         legend: {
-          display: false,
+          display: ChartSet.DISPLAY.FALSE,
         },
         tooltips: {
-          enabled: false,
+          enabled: ChartSet.TOOLTIPS_ENABLED,
         },
       },
     }));
@@ -246,8 +259,17 @@ export default class Stats extends Smart {
 
     this._setCharts();
   }
+
+  removeElement() {
+    super.removeElement();
+  }
+
   getTemplate() {
-    return createTemplateStatistic();
+    return createTemplateStatistic(this._data);
+  }
+
+  restoreHandlers() {
+    this._setCharts();
   }
 
   _setCharts() {
@@ -259,8 +281,21 @@ export default class Stats extends Smart {
     typeCtx.height = BAR_HEIGHT * 5;
     timeCtx.height = BAR_HEIGHT * 5;
 
-    this._moneyChart = createMoneyChart(moneyCtx, this._data);
-    this._timeChart = createTypeChart(timeCtx, this._data);
-    this._typeChart = createTimeSpendChart(typeCtx, this._data);
+    const typeStat = getType(this._data);
+    const priceStat = getPrice(this._data);
+    const countTypeStat = getCountType(this._data);
+    const durationStat = typeStat.map((item) => getDuration(this._data, item));
+
+
+    const statistics = typeStat.map((item, index) => ({
+      type: item,
+      price: priceStat[index],
+      count: countTypeStat[index],
+      duration: durationStat[index],
+    }));
+
+    this._moneyChart = createMoneyChart(moneyCtx, statistics);
+    this._timeChart = createTypeChart(timeCtx, statistics);
+    this._typeChart = createTimeSpendChart(typeCtx, statistics);
   }
 }

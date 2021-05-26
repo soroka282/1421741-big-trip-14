@@ -48,5 +48,4 @@ export default class SiteMenu extends AbstractView {
         break;
     }
   }
-
 }
