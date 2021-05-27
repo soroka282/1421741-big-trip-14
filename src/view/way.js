@@ -27,10 +27,10 @@ const getTimeToWay = (data) => {
 };
 
 const createWayTemplate = (data) => {
-
+  const dataSort = data.sort((el1, el2) => el1.dateFrom - el2.dateFrom);
   return `<div class="trip-info__main">
-    <h1 class="trip-info__title">${getWayInfo(data)}</h1>
-    <p class="trip-info__dates">${getDateMonthDay(getTimeFromWay(data))}&nbsp;&mdash;&nbsp;${getDateMonthDay(getTimeToWay(data))}</p>
+    <h1 class="trip-info__title">${getWayInfo(dataSort)}</h1>
+    <p class="trip-info__dates">${getDateMonthDay(getTimeFromWay(dataSort))}&nbsp;&mdash;&nbsp;${getDateMonthDay(getTimeToWay(dataSort))}</p>
   </div>`;
 };
 

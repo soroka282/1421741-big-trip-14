@@ -1,9 +1,12 @@
 import dayjs from 'dayjs';
 
+const MINUTES_IN_HOURS = 60;
+const HOURS = 24;
+
 export const getTimeFormat = (time) => {
-  const day = Math.floor(time / 60 / 24);
-  const hour = Math.floor((time - day * 24 * 60) / 60);
-  const minute = time % 60;
+  const day = Math.floor(time / MINUTES_IN_HOURS / HOURS);
+  const hour = Math.floor((time - day * HOURS * MINUTES_IN_HOURS) / MINUTES_IN_HOURS);
+  const minute = time % MINUTES_IN_HOURS;
 
   if (day) {
     return `${day}D ${hour ? hour : '00'}H ${minute ? minute : '00'}M`;

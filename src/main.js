@@ -1,18 +1,15 @@
 import SiteMenuView from './view/menu.js';
-import WayPointView from './view/way.js';
-import CostElementView from './view/cost.js';
 import StatsView from './view/stats.js';
-
 import FilterModel from './model/filter.js';
 import PointsModel from './model/points.js';
-
 import TripPresenter from './presenter/trip.js';
 import FilterPresenter from './presenter/filter.js';
+import WayPresenter from './presenter/way-presenter.js';
+import CostPresenter from './presenter/cost-presenter.js';
 import {renderElement, RenderPosition, remove} from './utils/render.js';
-//simport {data} from './mock/data.js';
 import {MenuItem, UpdatePoint, FilterType} from './utils/const.js';
-import Api from './api.js';
-import Store from './store-data.js';
+import Api from './api/api.js';
+import Store from './data/store-data.js';
 
 const AUTHORIZATION = 'Basic beloboka282';
 const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
@@ -23,20 +20,19 @@ const tripControlsFilters = document.querySelector('.trip-controls__filters');
 const tripEvents = document.querySelector('.trip-events');
 const pageBodyContainer = document.querySelectorAll('.page-body__container');
 
+const buttonNewEvent = document.querySelector('.trip-main__event-add-btn');
+
 const StoreData = new Store();
-
 const siteMenuComponent = new SiteMenuView();
-
 const api = new Api(END_POINT, AUTHORIZATION);
 
 const pointsModel = new PointsModel();
 const filterModel = new FilterModel();
-
+const wayPresenter = new WayPresenter(tripInfo, pointsModel);
+const costPresenter = new CostPresenter(tripInfo, pointsModel);
 const tripPresenter = new TripPresenter(tripEvents, pointsModel, filterModel, api);
-
 const filterPresenter = new FilterPresenter(tripControlsFilters, filterModel, pointsModel);
 
-const buttonNewEvent = document.querySelector('.trip-main__event-add-btn');
 buttonNewEvent.addEventListener('click', (evt) => {
   evt.preventDefault();
   tripPresenter.createPoint();
@@ -89,12 +85,20 @@ Promise.all([
     StoreData.setDestinations(data[0]);
     StoreData.setOffers(data[1]);
     pointsModel.setPoints(UpdatePoint.INIT, data[2]);
-    renderElement(tripInfo, new WayPointView(data[2]), RenderPosition.BEFOREEND);
-    renderElement(tripInfo, new CostElementView(data[2]), RenderPosition.BEFOREEND);
+    wayPresenter.init();
+    costPresenter.init();
+    buttonNewEvent.disabled = false;
+    filterPresenter.init();
+  })
+  .catch((data) => {
+    StoreData.setDestinations(data[0]);
+    StoreData.setOffers(data[1]);
+    pointsModel.setPoints(UpdatePoint.INIT, []);
+    wayPresenter.init();
+    costPresenter.init();
     buttonNewEvent.disabled = false;
     filterPresenter.init();
   });
-
 
 export {
   StoreData

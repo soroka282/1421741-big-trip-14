@@ -6,6 +6,8 @@ import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import he from 'he';
 
+const DEFAULT_TYPE = 'transport';
+
 const createPictureMarkup = (elem) => {
 
   if (elem.length === 0) {
@@ -61,7 +63,7 @@ const offersArrLength = (offerData, type) => {
 const editPointTemplate = (data) => {
   const destinationName = StoreData.getDestinations().map((i) => {return i.name; });
 
-  const {type = 'transport', offers, price, dateFrom, dateTo, destination, isDisabled, isSaving, isDeleting} = data;
+  const {type = DEFAULT_TYPE, offers, price, dateFrom, dateTo, destination, isDisabled, isSaving, isDeleting} = data;
 
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -358,7 +360,7 @@ export default class PointEdit extends Smart {
 
     const isIncludeTargetOffer = this._checkedOffers.some((item) => item.title === evt.target.dataset.title);
 
-    const pointType = this._data.type || 'transport';
+    const pointType = this._data.type || DEFAULT_TYPE;
 
     const checkOffer = StoreData
       .getOffers()

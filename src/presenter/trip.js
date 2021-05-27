@@ -47,7 +47,6 @@ export default class Trip {
 
     remove(this._listPointsComponent);
 
-
     this._pointsModel.removeObserver(this._handleModelEvent);
     this._filterModel.removeObserver(this._handleModelEvent);
   }
