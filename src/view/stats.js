@@ -253,9 +253,9 @@ export default class Stats extends Smart {
   constructor(data) {
     super();
     this._data = data;
-    this._moneyChart == null;
-    this._typeChart == null;
-    this._timeChart == null;
+    this._moneyChart = null;
+    this._typeChart = null;
+    this._timeChart = null;
 
     this._setCharts();
   }

@@ -322,7 +322,7 @@ export default class PointEdit extends Smart {
     evt.preventDefault();
 
     const destinationFilter = this._destination.filter((i) => {
-      return i.name == evt.target.value;
+      return i.name = evt.target.value;
     });
 
     document.querySelectorAll('#destination-list-1 option')
