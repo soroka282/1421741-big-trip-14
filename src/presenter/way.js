@@ -14,7 +14,7 @@ export default class WayPresenter {
 
   init() {
     const prevWayComponent = this._wayComponent;
-    this._points = this._pointsModel.getPoints();
+    this._points = this._pointsModel.get();
 
     this._wayComponent = new Way(this._points);
 

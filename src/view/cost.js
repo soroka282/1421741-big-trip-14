@@ -1,11 +1,8 @@
 import AbstractView from '../abstract.js';
 
 const getSumMoneyWay = (data) => {
-  const money = data.map((event) => {
-    return event.price;
-  });
-  return money.reduce((a , b ) => {
-    return a + b;
+  return data.reduce((acc , item ) => {
+    return acc + item.price;
   }, 0);
 };
 

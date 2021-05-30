@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
 
 export const getType = (data) => {
-  return Array.from(new Set(data.map((i) => {
-    return i.type;
+  return Array.from(new Set(data.map((item) => {
+    return item.type;
   })));
 };
 
@@ -20,8 +20,8 @@ export const getPrice = (points) => {
 
 export const getCountType = (points) => {
   const data = Array(getType(points).length).fill(0);
-  getType(points).map((type, index) => {
-    points.filter((i) => {return i.type === type;})
+  getType(points).map((item, index) => {
+    points.filter((point) => {return point.type === item;})
       .map(() => {
         data[index] += 1;
       });

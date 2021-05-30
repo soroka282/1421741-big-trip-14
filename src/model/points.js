@@ -6,17 +6,17 @@ export default class Points extends Observer {
     this._data = [];
   }
 
-  setPoints(updatePoint, data) {
+  set(updatePoint, data) {
     this._data = data.slice();
 
     this._notify(updatePoint);
   }
 
-  getPoints() {
+  get() {
     return this._data;
   }
 
-  updatePoint(updatePoint, update) {
+  update(updatePoint, update) {
     const index = this._data.findIndex((data) => data.id === update.id);
 
     if (index === -1) {
@@ -32,7 +32,7 @@ export default class Points extends Observer {
     this._notify(updatePoint, update);
   }
 
-  addPoint(updatePoint, update) {
+  add(updatePoint, update) {
     this._data = [
       update,
       ...this._data,
@@ -41,7 +41,7 @@ export default class Points extends Observer {
     this._notify(updatePoint, update);
   }
 
-  deletePoint(updatePoint, update) {
+  delete(updatePoint, update) {
     const index = this._data.findIndex((data) => data.id === update.id);
 
     if (index === -1) {
@@ -82,13 +82,13 @@ export default class Points extends Observer {
       {},
       point,
       {
-        date_from: point.dateFrom instanceof Date ? point.dateFrom.toISOString() : new Date(),
-        date_to: point.dateTo instanceof Date ? point.dateTo.toISOString() : new Date(),
-        is_favorite: point.favorite ? point.favorite : false,
-        base_price: point.price,
-        id: point.id,
-        type: point.type ? point.type : 'transport',
-        offers: point.offers ? point.offers : [],
+        'date_from': point.dateFrom instanceof Date ? point.dateFrom.toISOString() : new Date(),
+        'date_to': point.dateTo instanceof Date ? point.dateTo.toISOString() : new Date(),
+        'is_favorite': point.favorite ? point.favorite : false,
+        'base_price': point.price,
+        'id': point.id,
+        'type': point.type ? point.type : 'transport',
+        'offers': point.offers ? point.offers : [],
       },
     );
 

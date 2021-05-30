@@ -4,14 +4,16 @@ import FilterModel from './model/filter.js';
 import PointsModel from './model/points.js';
 import TripPresenter from './presenter/trip.js';
 import FilterPresenter from './presenter/filter.js';
-import WayPresenter from './presenter/way-presenter.js';
-import CostPresenter from './presenter/cost-presenter.js';
+import WayPresenter from './presenter/way.js';
+import CostPresenter from './presenter/cost.js';
 import {renderElement, RenderPosition, remove} from './utils/render.js';
 import {MenuItem, UpdatePoint, FilterType} from './utils/const.js';
+import {showMsgError} from './utils/msg-error';
+
 import Api from './api/api.js';
 import Store from './data/store-data.js';
 
-const AUTHORIZATION = 'Basic beloboka282';
+const AUTHORIZATION = 'Basic beloboka_282';
 const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 
 const tripControlsNavigation = document.querySelector('.trip-controls__navigation');
@@ -49,7 +51,7 @@ const handleSiteMenuClick = (menuItem) => {
     case MenuItem.TABLE:
       tripPresenter.destroy();
       tripPresenter.init();
-      filterModel.setFilter(UpdatePoint.MAJOR, FilterType.EVERYTHING);
+      filterModel.set(UpdatePoint.MAJOR, FilterType.EVERYTHING);
       document.querySelector('.trip-tabs__btn-stats').style.pointerEvents = 'AUTO';
       remove(statsComponent);
       buttonNewEvent.disabled = false;
@@ -59,7 +61,7 @@ const handleSiteMenuClick = (menuItem) => {
     case MenuItem.STATS:
       document.querySelector('.trip-tabs__btn-stats').style.pointerEvents = 'NONE';
       tripPresenter.destroy();
-      statsComponent = new StatsView(pointsModel.getPoints());
+      statsComponent = new StatsView(pointsModel.get());
       renderElement(tripEvents, statsComponent, RenderPosition.BEFOREEND);
       buttonNewEvent.disabled = true;
       inputFilterAll.forEach((input) => {
@@ -82,22 +84,18 @@ Promise.all([
   api.getPoints(),
 ])
   .then((data) => {
-    StoreData.setDestinations(data[0]);
-    StoreData.setOffers(data[1]);
-    pointsModel.setPoints(UpdatePoint.INIT, data[2]);
+    const [destinations, offers, points] = data;
+    StoreData.setDestinations(destinations);
+    StoreData.setOffers(offers);
+    pointsModel.set(UpdatePoint.INIT, points);
     wayPresenter.init();
     costPresenter.init();
     buttonNewEvent.disabled = false;
     filterPresenter.init();
   })
-  .catch((data) => {
-    StoreData.setDestinations(data[0]);
-    StoreData.setOffers(data[1]);
-    pointsModel.setPoints(UpdatePoint.INIT, []);
-    wayPresenter.init();
-    costPresenter.init();
-    buttonNewEvent.disabled = false;
-    filterPresenter.init();
+  .catch((error) => {
+    showMsgError();
+    throw new Error(error);
   });
 
 export {

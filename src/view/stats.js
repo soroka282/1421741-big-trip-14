@@ -12,16 +12,16 @@ const createMoneyChart = (moneyCtx, statistics) => {
     return elem2.price - elem1.price;
   });
 
-  const type = sortByPrice.map((i) => i.type);
-  const price = sortByPrice.map((i) => i.price);
+  const types = sortByPrice.map((i) => i.type);
+  const prices = sortByPrice.map((i) => i.price);
 
   return (new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
     type: ChartSet.TYPE,
     data: {
-      labels: type,
+      labels: types,
       datasets: [{
-        data: price,
+        data: prices,
         backgroundColor: ChartSet.COLOR.WHITE,
         hoverBackgroundColor: ChartSet.COLOR.WHITE,
         anchor: ChartSet.ANCHOR.START,
@@ -86,17 +86,17 @@ const createTimeSpendChart = (timeCtx, statistics) => {
   const sortByTime = statistics.sort((elem1, elem2) => {
     return elem2.duration - elem1.duration;
   });
-  const type = sortByTime.map((i) => i.type);
-  const time = sortByTime.map((i) => i.duration);
+  const types = sortByTime.map((i) => i.type);
+  const times = sortByTime.map((i) => i.duration);
 
   return (
     new Chart(timeCtx, {
       plugins: [ChartDataLabels],
       type: ChartSet.TYPE,
       data: {
-        labels: type,
+        labels: types,
         datasets: [{
-          data: time,
+          data: times,
           backgroundColor: ChartSet.COLOR.WHITE,
           hoverBackgroundColor: ChartSet.COLOR.WHITE,
           anchor: ChartSet.ANCHOR.START,
@@ -160,8 +160,8 @@ const createTypeChart = (typeCtx, statistics) => {
   const sortByType = statistics.sort((elem1, elem2) => {
     return elem2.count - elem1.count;
   });
-  const type = sortByType.map((i) => i.type);
-  const count = sortByType.map((i) => i.count);
+  const types = sortByType.map((i) => i.type);
+  const counts = sortByType.map((i) => i.count);
 
 
   return (
@@ -169,9 +169,9 @@ const createTypeChart = (typeCtx, statistics) => {
       plugins: [ChartDataLabels],
       type: ChartSet.TYPE,
       data: {
-        labels: type,
+        labels: types,
         datasets: [{
-          data: count,
+          data: counts,
           backgroundColor: ChartSet.COLOR.WHITE,
           hoverBackgroundColor: ChartSet.COLOR.WHITE,
           anchor: ChartSet.ANCHOR.START,

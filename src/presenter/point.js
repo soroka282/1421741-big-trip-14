@@ -1,18 +1,12 @@
 import PointView from '../view/events.js';
 import PointEditView from '../view/point-edit.js';
 import {renderElement, RenderPosition, replace, remove} from '../utils/render.js';
-import {UserAction, UpdatePoint} from '../utils/const.js';
+import {UserAction, UpdatePoint, State} from '../utils/const.js';
 import {isDatesEqual} from '../utils/events.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',
-};
-
-export const State = {
-  SAVING: 'SAVING',
-  DELETING: 'DELETING',
-  ABORTING: 'ABORTING',
 };
 
 export default class Point {

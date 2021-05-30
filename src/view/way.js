@@ -2,28 +2,28 @@ import {getDateMonthDay} from '../utils/events.js';
 import AbstractView from '../abstract.js';
 
 const getWayInfo = (data) => {
-  const way = Array.from(new Set(data.map((event) => {
+  const ways = Array.from(new Set(data.map((event) => {
     return event.destination.name;
   })));
-  if (way.length > 3) {
-    return `${way[0]} &mdash; ... &mdash; ${way[way.length -1]}`;
+  if (ways.length > 3) {
+    return `${ways[0]} &mdash; ... &mdash; ${ways[ways.length -1]}`;
   } else {
-    return way.join('&mdash;');
+    return ways.join('&mdash;');
   }
 };
 
 const getTimeFromWay = (data) => {
-  const time = data.map((event) => {
+  const dates = data.map((event) => {
     return event.dateFrom;
   });
-  return time[0];
+  return dates[0];
 };
 
 const getTimeToWay = (data) => {
-  const time = data.map((event) => {
+  const dates = data.map((event) => {
     return event.dateTo;
   });
-  return time[time.length -1];
+  return dates[dates.length -1];
 };
 
 const createWayTemplate = (data) => {

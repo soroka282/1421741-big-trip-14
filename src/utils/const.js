@@ -7,7 +7,7 @@ const SortType = {
 const SET_FLATPICKR = {
   dateFormat: 'Y/m/d H:i',
   enableTime: true,
-  time_24hr: true,
+  'time_24hr': true,
 };
 
 const UserAction = {
@@ -69,4 +69,10 @@ const ChartSet = {
   TOOLTIPS_ENABLED: false,
 };
 
-export {SortType, SET_FLATPICKR, UserAction, UpdatePoint, FilterType, MenuItem, ChartSet };
+const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
+};
+
+export {State, SortType, SET_FLATPICKR, UserAction, UpdatePoint, FilterType, MenuItem, ChartSet };

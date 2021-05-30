@@ -19,10 +19,10 @@ export default class Filter {
   }
 
   init() {
-    const filters = this._getFilters();
+    const filters = this._get();
     const prevFilterComponent = this._filterComponent;
 
-    this._filterComponent = new FilterView(filters, this._filterModel.getFilter());
+    this._filterComponent = new FilterView(filters, this._filterModel.get());
     this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
 
     if (prevFilterComponent === null) {
@@ -39,15 +39,15 @@ export default class Filter {
   }
 
   _handleFilterTypeChange(filterType) {
-    if (this._filterModel.getFilter() === filterType) {
+    if (this._filterModel.get() === filterType) {
       return;
     }
 
-    this._filterModel.setFilter(UpdatePoint.MAJOR, filterType);
+    this._filterModel.set(UpdatePoint.MAJOR, filterType);
   }
 
-  _getFilters() {
-    const point = this._pointModel.getPoints();
+  _get() {
+    const point = this._pointModel.get();
 
     return [
       {

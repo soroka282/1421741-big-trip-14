@@ -15,7 +15,7 @@ export default class CostPresenter {
   init() {
     const prevCostComponent = this._costComponent;
 
-    this._points = this._pointsModel.getPoints();
+    this._points = this._pointsModel.get();
     this._costComponent = new Cost(this._points);
 
     if (prevCostComponent === null) {
